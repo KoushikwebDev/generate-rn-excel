@@ -145,3 +145,114 @@ label {
 .preview-group p strong {
   color: #111827;
 }
+
+
+/* mobile */
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .form-section,
+  .preview-section {
+    flex: none;
+    width: 100%;
+    padding: 1.25rem;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    margin-top: 1rem;
+  }
+
+  .date-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .submit-btn {
+    margin-top: 1rem;
+  }
+
+  .preview-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-container {
+    padding: 0.75rem;
+  }
+
+  .form-section,
+  .preview-section {
+    padding: 1rem;
+  }
+
+  .form-title {
+    font-size: 1.25rem;
+  }
+
+  .input-field {
+    padding: 0.5rem;
+  }
+
+  .submit-btn {
+    padding: 0.75rem;
+  }
+}
+
+/* Additional responsive tweaks for very small screens */
+@media (max-width: 360px) {
+  .form-title,
+  .preview-title {
+    font-size: 1.1rem;
+  }
+
+  .section-title {
+    font-size: 0.95rem;
+  }
+
+  label {
+    font-size: 0.9rem;
+  }
+
+  .input-field {
+    font-size: 0.9rem;
+  }
+
+  .preview-group p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Prevent zooming on form inputs on mobile */
+@media (max-width: 768px) {
+  select,
+  textarea,
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"] {
+    font-size: 16px;
+  }
+}
+
+/* Fix for iOS Safari input zoom issue */
+@supports (-webkit-touch-callout: none) {
+  input,
+  textarea {
+    font-size: 16px;
+  }
+}
