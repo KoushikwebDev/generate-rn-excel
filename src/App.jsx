@@ -5,46 +5,86 @@ import "react-datepicker/dist/react-datepicker.css";
 import { exportReleaseNoteExcel } from "./utils/exportReleaseNoteExcel";
 import sbiLogo from "./images/sbig-logo.svg";
 import "./App.css";
+import { useEffect } from "react";
+
+const initialValues = {
+  releaseDate: new Date(),
+  sitPassDate: new Date(),
+  developerName: "",
+  developerEmail: "",
+  developerPhone: "",
+  crNumber: "",
+  crTitle: "",
+  supervisorName: "Amlan",
+  supervisorEmail: "amlan.chakraborty@intglobal.com",
+  supervisorPhone: "9830940648",
+  saveDetails: true,
+};
+
+const validationSchema = Yup.object({
+  releaseDate: Yup.date().required("Release Date is required"),
+  sitPassDate: Yup.date().required("SIT Pass Date is required"),
+  developerName: Yup.string().required("Developer name is required"),
+  developerEmail: Yup.string()
+    .email("Invalid email")
+    .required("Developer email is required"),
+  developerPhone: Yup.string()
+    .matches(/^\d{10}$/, "Must be 10 digits")
+    .required("Developer phone is required"),
+  crNumber: Yup.string().required("CR Number is required"),
+  crTitle: Yup.string().required("CR Title is required"),
+  supervisorName: Yup.string().required("Supervisor name is required"),
+  supervisorEmail: Yup.string()
+    .email("Invalid email")
+    .required("Supervisor email is required"),
+  supervisorPhone: Yup.string()
+    .matches(/^\d{10}$/, "Must be 10 digits")
+    .required("Supervisor phone is required"),
+});
+
+// Format dates for preview display
+const formatDate = (date) => {
+  if (!date) return "";
+  try {
+    return new Date(date).toLocaleDateString("en-GB");
+  } catch {
+    return "";
+  }
+};
 
 const App = () => {
   const formik = useFormik({
-    initialValues: {
-      releaseDate: new Date(),
-      sitPassDate: new Date(),
-      developerName: "",
-      developerEmail: "",
-      developerPhone: "",
-      crNumber: "",
-      crTitle: "",
-      supervisorName: "Amlan",
-      supervisorEmail: "amlan.chakraborty@intglobal.com",
-      supervisorPhone: "9830940648",
-    },
-    validationSchema: Yup.object({
-      releaseDate: Yup.date().required("Release Date is required"),
-      sitPassDate: Yup.date().required("SIT Pass Date is required"),
-      developerName: Yup.string().required("Developer name is required"),
-      developerEmail: Yup.string()
-        .email("Invalid email")
-        .required("Developer email is required"),
-      developerPhone: Yup.string()
-        .matches(/^\d{10}$/, "Must be 10 digits")
-        .required("Developer phone is required"),
-      crNumber: Yup.string().required("CR Number is required"),
-      crTitle: Yup.string().required("CR Title is required"),
-      supervisorName: Yup.string().required("Supervisor name is required"),
-      supervisorEmail: Yup.string()
-        .email("Invalid email")
-        .required("Supervisor email is required"),
-      supervisorPhone: Yup.string()
-        .matches(/^\d{10}$/, "Must be 10 digits")
-        .required("Supervisor phone is required"),
-    }),
+    initialValues: initialValues,
+    validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log(values);
       exportReleaseNoteExcel(values, sbiLogo);
+      handleSaveDetails(values.saveDetails);
     },
   });
+
+  // save details
+  function handleSaveDetails(isSaveDetails) {
+    const detailsToSave = formik.values;
+    delete detailsToSave.crNumber;
+    delete detailsToSave.crTitle;
+
+    isSaveDetails
+      ? localStorage.setItem("formDetails", JSON.stringify(detailsToSave))
+      : localStorage.removeItem("formDetails");
+  }
+
+  // pre-populate form details
+  useEffect(() => {
+    const savedFormDetails = localStorage.getItem("formDetails")
+      ? JSON.parse(localStorage.getItem("formDetails"))
+      : null;
+
+    if (savedFormDetails) {
+      savedFormDetails.crNumber = "";
+      savedFormDetails.crTitle = "";
+      formik.setValues(savedFormDetails);
+    }
+  }, []);
 
   const renderInput = (name, label, type = "text") => {
     const isSupervisorField = name.startsWith("supervisor");
@@ -100,16 +140,6 @@ const App = () => {
     </div>
   );
 
-  // Format dates for preview display
-  const formatDate = (date) => {
-    if (!date) return "";
-    try {
-      return new Date(date).toLocaleDateString("en-GB");
-    } catch {
-      return "";
-    }
-  };
-
   return (
     <div className="app-container">
       <form onSubmit={formik.handleSubmit} className="form-section">
@@ -137,6 +167,18 @@ const App = () => {
         {renderInput("supervisorName", "Supervisor Name")}
         {renderInput("supervisorEmail", "Supervisor Email", "email")}
         {renderInput("supervisorPhone", "Supervisor Phone")}
+
+        {/* Save Checkbox */}
+        <div className="save-checkbox">
+          <input
+            type="checkbox"
+            id="saveDetails"
+            name="saveDetails"
+            checked={formik.values.saveDetails}
+            onChange={formik.handleChange}
+          />
+          <label htmlFor="saveDetails">Save details for next time</label>
+        </div>
 
         <button type="submit" className="submit-btn">
           Download Release Note XLSX
