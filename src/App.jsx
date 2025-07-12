@@ -569,14 +569,14 @@ const App = () => {
               <motion.h1
                 style={{
                   color: currentColors.primary,
-                  fontSize: '1.5rem',
+                  fontSize: 'clamp(1.1rem, 4vw, 1.5rem)',
                   fontWeight: 'bold',
                   margin: 0
                 }}
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >
-                Generate Release Note
+                {typeof window !== 'undefined' && window.innerWidth <= 600 ? 'Generate RN' : 'Generate Release Note'}
               </motion.h1>
             </Link>
             
@@ -638,7 +638,7 @@ const App = () => {
               fontSize: '16px'
             }}
           >
-            {isDark ? '🌙' : '☀️'}
+            {isDark ? '☀️' : '🌙'}
           </motion.button>
         </motion.nav>
 

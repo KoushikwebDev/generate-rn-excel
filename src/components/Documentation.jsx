@@ -16,7 +16,8 @@ const Documentation = () => {
         padding: '2rem',
         width: '100%',
         maxWidth: '100%',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        scrollBehavior: 'smooth'
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -34,11 +35,11 @@ const Documentation = () => {
       >
         <h1 style={{ 
           color: currentColors.primary, 
-          fontSize: '2.5rem', 
+          fontSize: 'clamp(1.3rem, 5vw, 2.5rem)',
           marginBottom: '1rem',
           fontWeight: 'bold'
         }}>
-          Generate Release Note - Documentation
+          {typeof window !== 'undefined' && window.innerWidth <= 600 ? 'Generate RN - Documentation' : 'Generate Release Note - Documentation'}
         </h1>
         <p style={{ 
           color: currentColors.textSecondary, 
@@ -254,7 +255,7 @@ const Documentation = () => {
         >
           <h2 style={{ color: currentColors.primary, marginBottom: '1rem' }}>🎯 Overview</h2>
           <p style={{ color: currentColors.textSecondary, marginBottom: '1rem' }}>
-            Generate XLS is a modern React-based web application designed specifically for SBI General Insurance 
+            Generate Release Notes is a modern React-based web application designed specifically for SBI General Insurance 
             to streamline the process of creating release notes and test case documentation. The application 
             provides an intuitive interface for developers and supervisors to input project details and 
             generate professional Excel files with proper formatting and branding.
@@ -290,7 +291,7 @@ const Documentation = () => {
               borderRadius: '0.5rem',
               border: `1px solid ${currentColors.border}`
             }}>
-              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>📝 Form Management</h3>
+              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>�� Form Management</h3>
               <ul style={{ color: currentColors.textSecondary, marginLeft: '1rem' }}>
                 <li>Comprehensive form with validation using Formik and Yup</li>
                 <li>Auto-save functionality for form details</li>
@@ -817,7 +818,7 @@ const Documentation = () => {
           transition={{ duration: 0.5, delay: 1.2 }}
         >
           <p style={{ color: currentColors.textSecondary, marginBottom: '0.5rem' }}>
-            © 2024 Generate XLS - SBI General Insurance. Built with ❤️ using React and modern web technologies.
+            © 2024 Generate Release Notes - SBI General Insurance. Built with ❤️ using React and modern web technologies.
           </p>
           <p style={{ color: currentColors.primary, fontWeight: '600', fontSize: '1.1rem' }}>
             Developed by <a 
