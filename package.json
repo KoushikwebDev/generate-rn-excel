@@ -13,9 +13,12 @@
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "formik": "^2.4.6",
+    "framer-motion": "^12.23.3",
+    "jszip": "^3.10.1",
     "react": "^19.1.0",
     "react-datepicker": "^8.4.0",
     "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.3",
     "yup": "^1.6.1"
   },
   "devDependencies": {
