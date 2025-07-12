@@ -539,6 +539,7 @@ const FormComponent = () => {
 const App = () => {
   const { isDark, toggleTheme, colors } = useTheme();
   const currentColors = isDark ? colors.dark : colors.light;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
 
   return (
     <Router>
@@ -547,7 +548,7 @@ const App = () => {
         <motion.nav
           style={{
             backgroundColor: currentColors.surface,
-            padding: '1rem 2rem',
+            padding: isMobile ? '0.5rem 0.5rem' : '1rem 2rem',
             boxShadow: currentColors.shadow,
             borderBottom: `1px solid ${currentColors.border}`,
             display: 'flex',
@@ -562,25 +563,25 @@ const App = () => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '2rem'
+              gap: isMobile ? '0.5rem' : '2rem'
             }}
           >
             <Link to="/" style={{ textDecoration: 'none' }}>
               <motion.h1
                 style={{
                   color: currentColors.primary,
-                  fontSize: 'clamp(1.1rem, 4vw, 1.5rem)',
+                  fontSize: isMobile ? '1rem' : 'clamp(1.1rem, 4vw, 1.5rem)',
                   fontWeight: 'bold',
                   margin: 0
                 }}
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >
-                {typeof window !== 'undefined' && window.innerWidth <= 600 ? 'Generate RN' : 'Generate Release Note'}
+                 {isMobile ? 'Generate RN' : 'Generate Release Note'}
               </motion.h1>
             </Link>
             
-            <motion.div style={{ display: 'flex', gap: '1rem' }}>
+            <motion.div style={{ display: 'flex', gap: isMobile ? '0.3rem' : '1rem' }}>
               <Link to="/" style={{ textDecoration: 'none' }}>
                 <motion.button
                   style={{
@@ -588,9 +589,10 @@ const App = () => {
                     color: currentColors.text,
                     border: `1px solid ${currentColors.border}`,
                     borderRadius: '0.5rem',
-                    padding: '0.5rem 1rem',
+                    padding: isMobile ? '0.3rem 0.6rem' : '0.5rem 1rem',
                     cursor: 'pointer',
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    fontSize: isMobile ? '0.9rem' : undefined
                   }}
                   whileHover={{ scale: 1.02, backgroundColor: currentColors.background }}
                   whileTap={{ scale: 0.98 }}
@@ -606,9 +608,10 @@ const App = () => {
                     color: currentColors.text,
                     border: `1px solid ${currentColors.border}`,
                     borderRadius: '0.5rem',
-                    padding: '0.5rem 1rem',
+                    padding: isMobile ? '0.3rem 0.6rem' : '0.5rem 1rem',
                     cursor: 'pointer',
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    fontSize: isMobile ? '0.9rem' : undefined
                   }}
                   whileHover={{ scale: 1.02, backgroundColor: currentColors.background }}
                   whileTap={{ scale: 0.98 }}
@@ -628,14 +631,14 @@ const App = () => {
               background: currentColors.gradient,
               border: 'none',
               borderRadius: '50%',
-              width: '40px',
-              height: '40px',
+              width: isMobile ? '32px' : '40px',
+              height: isMobile ? '32px' : '40px',
               cursor: 'pointer',
               boxShadow: currentColors.shadow,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '16px'
+              fontSize: isMobile ? '1rem' : '16px'
             }}
           >
             {isDark ? '☀️' : '🌙'}
