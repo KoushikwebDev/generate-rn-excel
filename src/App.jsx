@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "./context/ThemeContext";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Documentation from "./components/Documentation";
+import MailModal from "./components/MailModal";
 
 const initialValues = {
   releaseDate: new Date(),
@@ -25,7 +26,7 @@ const initialValues = {
   supervisorEmail: "amlan.chakraborty@intglobal.com",
   supervisorPhone: "9830940648",
   saveDetails: true,
-  downloadZip: false,
+  downloadZip: true, // changed from false to true
   testFileMode: 'demo', // 'demo' or 'user'
   userTestFile: null
 };
@@ -78,6 +79,7 @@ const formatDate = (date) => {
 const FormComponent = () => {
   const { isDark, toggleTheme, colors } = useTheme();
   const currentColors = isDark ? colors.dark : colors.light;
+  const [isMailModalOpen, setIsMailModalOpen] = useState(false);
 
   const formik = useFormik({
     initialValues: initialValues,
@@ -686,7 +688,51 @@ const FormComponent = () => {
             </p>
           </motion.div>
         </AnimatePresence>
+
+        {/* Copy Mail Body Button - Bottom */}
+        <motion.div
+          style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            marginTop: '2rem',
+            paddingTop: '1.5rem',
+            borderTop: `1px solid ${currentColors.border}`
+          }}
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 1.0 }}
+        >
+          <motion.button
+            onClick={() => setIsMailModalOpen(true)}
+            style={{
+              background: currentColors.gradient,
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '0.75rem',
+              padding: '0.75rem 1.5rem',
+              cursor: 'pointer',
+              fontWeight: '600',
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              boxShadow: currentColors.shadow
+            }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            📧 Copy Mail Body
+          </motion.button>
+        </motion.div>
       </motion.div>
+
+      {/* Mail Modal */}
+      <MailModal 
+        isOpen={isMailModalOpen}
+        onClose={() => setIsMailModalOpen(false)}
+        crNumber={formik.values.crNumber}
+        crTitle={formik.values.crTitle}
+      />
 
     </motion.div>
   );
