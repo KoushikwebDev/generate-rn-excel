@@ -20,7 +20,8 @@ export const exportReleaseNoteZip = async (params) => {
     supervisorName,
     supervisorEmail,
     supervisorPhone,
-    applicationName = "website portal"
+    applicationName = "website portal",
+    userTestFile // <-- added
   } = params;
 
   const zip = new JSZip();
@@ -39,12 +40,25 @@ export const exportReleaseNoteZip = async (params) => {
       releaseNoteBuffer
     );
 
-    // 2. Generate and add Test Cases Excel (directly in CR folder)
-    const testCasesBuffer = await generateTestCasesBuffer(params);
-    crFolder.file(
-      `Test_Cases-${crNumber}-${new Date().toISOString().split('T')[0]}.xlsx`,
-      testCasesBuffer
-    );
+    // 2. Add Test Cases file
+    if (userTestFile) {
+      // If user uploaded a test file, include it in the ZIP (do not include demo)
+      // Read the file as ArrayBuffer
+      const fileBuffer = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(userTestFile);
+      });
+      crFolder.file(userTestFile.name, fileBuffer);
+    } else {
+      // Otherwise, generate and include the demo test case file
+      const testCasesBuffer = await generateTestCasesBuffer(params);
+      crFolder.file(
+        `Test_Cases-${crNumber}-${new Date().toISOString().split('T')[0]}.xlsx`,
+        testCasesBuffer
+      );
+    }
 
     // 3. Add static build.zip to Objects folder
     try {

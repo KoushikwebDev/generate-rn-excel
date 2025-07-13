@@ -26,6 +26,8 @@ const initialValues = {
   supervisorPhone: "9830940648",
   saveDetails: true,
   downloadZip: false,
+  testFileMode: 'demo', // 'demo' or 'user'
+  userTestFile: null
 };
 
 const validationSchema = Yup.object({
@@ -47,6 +49,20 @@ const validationSchema = Yup.object({
   supervisorPhone: Yup.string()
     .matches(/^\d{10}$/, "Must be 10 digits")
     .required("Supervisor phone is required"),
+  testFileMode: Yup.string().oneOf(['demo', 'user']).when('downloadZip', {
+    is: true,
+    then: (schema) => schema.required(),
+    otherwise: (schema) => schema.nullable()
+  }),
+  userTestFile: Yup.mixed().when(['downloadZip', 'testFileMode'], {
+    is: (downloadZip, testFileMode) => downloadZip && testFileMode === 'user',
+    then: (schema) => schema.required('Please upload a test file (.csv or .xls)').test('fileType', 'Only .csv or .xls files are accepted', (value) => {
+      if (!value) return false;
+      const allowed = ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+      return allowed.includes(value.type) || value.name.endsWith('.csv') || value.name.endsWith('.xls') || value.name.endsWith('.xlsx');
+    }),
+    otherwise: (schema) => schema.nullable()
+  })
 });
 
 // Format dates for preview display
@@ -68,8 +84,15 @@ const FormComponent = () => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
+        // Check if user selected 'user' mode but didn't upload a file (only when downloadZip is true)
+        if (values.downloadZip && values.testFileMode === 'user' && !values.userTestFile) {
+          formik.setFieldTouched('userTestFile', true, true);
+          alert("Please upload a test file when selecting 'I have Test File' mode.");
+          return;
+        }
+        
         if (values.downloadZip) {
-          await exportReleaseNoteZip(values);
+          await exportReleaseNoteZip({ ...values, userTestFile: values.testFileMode === 'user' ? values.userTestFile : null });
         } else {
           exportReleaseNoteExcel(values, sbiLogo);
         }
@@ -77,6 +100,9 @@ const FormComponent = () => {
         // Reset only CR Number and CR Title
         formik.setFieldValue('crNumber', '');
         formik.setFieldValue('crTitle', '');
+        if (values.downloadZip && values.testFileMode === 'user') {
+          formik.setFieldValue('userTestFile', null);
+        }
       } catch (error) {
         console.error("Error during export:", error);
         alert("Error generating file. Please try again.");
@@ -124,7 +150,11 @@ const FormComponent = () => {
       alert("Please fill all required fields before previewing.");
       return;
     }
-    
+    // If user selected their own test file but didn't upload, show error (only when downloadZip is true)
+    if (type === 'testCases' && formik.values.downloadZip && formik.values.testFileMode === 'user' && !formik.values.userTestFile) {
+      formik.setFieldTouched('userTestFile', true, true);
+      return;
+    }
     try {
       await openExcelPreview(formik.values, type);
     } catch (error) {
@@ -138,20 +168,15 @@ const FormComponent = () => {
     const handleMessage = (event) => {
       if (event.data.type === 'updateFormFromPreview') {
         const updatedData = event.data.data;
-        
-        // Update form with the new data
         formik.setValues(prevValues => ({
           ...prevValues,
           ...updatedData
         }));
-        
-        // Show success message
         alert('Form data updated successfully! Your changes will be included in the next download.');
       }
     };
 
     window.addEventListener('message', handleMessage);
-    
     return () => {
       window.removeEventListener('message', handleMessage);
     };
@@ -329,6 +354,136 @@ const FormComponent = () => {
           {renderInput("supervisorPhone", "Supervisor Phone")}
         </motion.div>
 
+        {/* Test File Switch - Only show when Download Zip is checked */}
+        {formik.values.downloadZip && (
+          <motion.div 
+            style={{ 
+              margin: '1.5rem 0 1rem 0', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '1rem',
+              padding: '1rem',
+              borderRadius: '0.75rem',
+              backgroundColor: currentColors.inputBg,
+              border: `1px solid ${currentColors.inputBorder}`,
+              boxShadow: currentColors.shadow
+            }}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+          >
+            <span style={{ 
+              fontWeight: '500', 
+              color: currentColors.text,
+              fontSize: '0.9rem',
+              opacity: formik.values.testFileMode === 'demo' ? 1 : 0.6
+            }}>
+              Demo Test Cases File
+            </span>
+            
+            <div 
+              onClick={() => formik.setFieldValue('testFileMode', formik.values.testFileMode === 'demo' ? 'user' : 'demo')}
+              style={{
+                position: 'relative',
+                width: '3rem',
+                height: '1.5rem',
+                backgroundColor: formik.values.testFileMode === 'user' ? currentColors.primary : currentColors.inputBorder,
+                borderRadius: '1rem',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0.125rem'
+              }}
+            >
+              <motion.div
+                style={{
+                  width: '1.25rem',
+                  height: '1.25rem',
+                  backgroundColor: '#ffffff',
+                  borderRadius: '50%',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                }}
+                animate={{
+                  x: formik.values.testFileMode === 'user' ? '1.5rem' : '0rem'
+                }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              />
+            </div>
+            
+            <span style={{ 
+              fontWeight: '500', 
+              color: currentColors.text,
+              fontSize: '0.9rem',
+              opacity: formik.values.testFileMode === 'user' ? 1 : 0.6
+            }}>
+              I have Test Cases File
+            </span>
+          </motion.div>
+        )}
+
+        {/* User Test File Input - Only show when Download Zip is checked and user mode is selected */}
+        {formik.values.downloadZip && formik.values.testFileMode === 'user' && (
+          <motion.div 
+            style={{ 
+              marginBottom: '1rem',
+              padding: '1rem',
+              borderRadius: '0.75rem',
+              backgroundColor: currentColors.inputBg,
+              border: `1px solid ${currentColors.inputBorder}`,
+              boxShadow: currentColors.shadow
+            }}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <label 
+              htmlFor="userTestFile" 
+              style={{ 
+                display: 'block', 
+                fontWeight: '500', 
+                color: currentColors.text, 
+                marginBottom: '0.5rem',
+                fontSize: '0.9rem'
+              }}
+            >
+              Upload Test File (.csv, .xls, .xlsx)
+            </label>
+            <input
+              id="userTestFile"
+              name="userTestFile"
+              type="file"
+              accept=".csv,.xls,.xlsx"
+              onChange={e => {
+                formik.setFieldValue('userTestFile', e.currentTarget.files[0]);
+              }}
+              style={{ 
+                color: currentColors.text,
+                width: '100%',
+                padding: '0.5rem',
+                borderRadius: '0.5rem',
+                border: `1px solid ${currentColors.inputBorder}`,
+                backgroundColor: currentColors.background,
+                fontSize: '0.9rem'
+              }}
+            />
+            {formik.touched.userTestFile && formik.errors.userTestFile && (
+              <motion.p 
+                style={{ 
+                  color: currentColors.error, 
+                  fontSize: '0.9rem',
+                  marginTop: '0.5rem'
+                }}
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {formik.errors.userTestFile}
+              </motion.p>
+            )}
+          </motion.div>
+        )}
+
         {/* Checkboxes Container */}
         <motion.div 
           style={{ 
@@ -399,25 +554,27 @@ const FormComponent = () => {
               Preview RN
             </motion.button>
             
-            <motion.button 
-              type="button"
-              onClick={() => handlePreview('testCases')}
-              style={{
-                background: currentColors.gradient,
-                color: '#ffffff',
-                boxShadow: currentColors.shadow,
-                border: 'none',
-                borderRadius: '0.5rem',
-                padding: '0.75rem 1rem',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '0.9rem'
-              }}
-              whileHover={{ scale: 1.02, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Preview Test Cases
-            </motion.button>
+            {formik.values.downloadZip && formik.values.testFileMode === 'demo' && (
+              <motion.button 
+                type="button"
+                onClick={() => handlePreview('testCases')}
+                style={{
+                  background: currentColors.gradient,
+                  color: '#ffffff',
+                  boxShadow: currentColors.shadow,
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  padding: '0.75rem 1rem',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  fontSize: '0.9rem'
+                }}
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Preview Test Cases
+              </motion.button>
+            )}
           </motion.div>
         )}
 
@@ -548,7 +705,7 @@ const App = () => {
         <motion.nav
           style={{
             backgroundColor: currentColors.surface,
-            padding: isMobile ? '0.5rem 0.5rem' : '1rem 2rem',
+            padding: isMobile ? '0.7rem 0.5rem' : '1.2rem 2rem',
             boxShadow: currentColors.shadow,
             borderBottom: `1px solid ${currentColors.border}`,
             display: 'flex',
@@ -633,12 +790,15 @@ const App = () => {
               borderRadius: '50%',
               width: isMobile ? '32px' : '40px',
               height: isMobile ? '32px' : '40px',
+              aspectRatio: '1',
               cursor: 'pointer',
               boxShadow: currentColors.shadow,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: isMobile ? '1rem' : '16px'
+              fontSize: isMobile ? '1rem' : '16px',
+              padding: 0,
+              margin: 0
             }}
           >
             {isDark ? '☀️' : '🌙'}

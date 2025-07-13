@@ -339,9 +339,26 @@ const Documentation = () => {
               <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>👁️ Preview System</h3>
               <ul style={{ color: currentColors.textSecondary, marginLeft: '1rem' }}>
                 <li>Preview release notes before generation</li>
-                <li>Preview test cases with editable interface</li>
+                <li>Preview demo test cases with editable interface</li>
                 <li>Real-time content editing in preview mode</li>
                 <li>Download directly from preview window</li>
+              </ul>
+            </div>
+
+            <div style={{ 
+              padding: '1rem', 
+              backgroundColor: currentColors.background, 
+              borderRadius: '0.5rem',
+              border: `1px solid ${currentColors.border}`
+            }}>
+              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>📁 Test File Management</h3>
+              <ul style={{ color: currentColors.textSecondary, marginLeft: '1rem' }}>
+                <li>Modern switch toggle between demo and custom test files</li>
+                <li>Demo test cases file included by default</li>
+                <li>Upload custom test files (.csv, .xls, .xlsx)</li>
+                <li>Automatic validation for required file uploads</li>
+                <li>Preview button hidden for custom uploaded files</li>
+                <li>Seamless integration with ZIP packaging</li>
               </ul>
             </div>
 
@@ -593,10 +610,28 @@ const Documentation = () => {
               borderRadius: '0.5rem',
               border: `1px solid ${currentColors.border}`
             }}>
-              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>2. Preview Options</h3>
+              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>2. Test File Selection</h3>
+              <p style={{ color: currentColors.textSecondary, marginBottom: '0.5rem' }}>
+                Choose between demo test cases or upload your own test file:
+              </p>
+              <ul style={{ color: currentColors.textSecondary, marginLeft: '1rem' }}>
+                <li><strong>Demo Test Cases File:</strong> Default option with predefined test case structure</li>
+                <li><strong>I have Test Cases File:</strong> Upload your own .csv, .xls, or .xlsx file</li>
+                <li>Use the modern switch toggle to change between options</li>
+                <li>File upload is required when selecting custom test file mode</li>
+              </ul>
+            </div>
+
+            <div style={{ 
+              padding: '1rem', 
+              backgroundColor: currentColors.background, 
+              borderRadius: '0.5rem',
+              border: `1px solid ${currentColors.border}`
+            }}>
+              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>3. Preview Options</h3>
               <p style={{ color: currentColors.textSecondary }}>
-                Use the preview buttons to review your release notes and test cases before final generation. 
-                Preview windows allow editing and direct download of files.
+                Use the preview buttons to review your release notes and demo test cases before final generation. 
+                Preview windows allow editing and direct download of files. Note: Preview is only available for demo test cases.
               </p>
             </div>
 
@@ -606,10 +641,11 @@ const Documentation = () => {
               borderRadius: '0.5rem',
               border: `1px solid ${currentColors.border}`
             }}>
-              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>3. File Generation</h3>
+              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>4. File Generation</h3>
               <p style={{ color: currentColors.textSecondary }}>
                 Choose between individual Excel file download or ZIP package containing multiple files. 
-                The ZIP option includes organized folder structure with all necessary documentation.
+                The ZIP option includes organized folder structure with all necessary documentation. 
+                Custom uploaded test files are automatically included in ZIP packages.
               </p>
             </div>
 
@@ -619,7 +655,7 @@ const Documentation = () => {
               borderRadius: '0.5rem',
               border: `1px solid ${currentColors.border}`
             }}>
-              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>4. Data Persistence</h3>
+              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>5. Data Persistence</h3>
               <p style={{ color: currentColors.textSecondary }}>
                 Enable "Save details for next time" to automatically populate form fields in future sessions. 
                 Only CR number and title are reset after successful generation.
@@ -747,6 +783,23 @@ const Documentation = () => {
                 <strong>Returns:</strong> Promise that resolves when preview window opens
               </p>
             </div>
+
+            <div style={{ 
+              padding: '1rem', 
+              backgroundColor: currentColors.background, 
+              borderRadius: '0.5rem',
+              border: `1px solid ${currentColors.border}`
+            }}>
+              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>Test File Switch Component</h3>
+              <p style={{ color: currentColors.textSecondary, marginBottom: '0.5rem' }}>
+                Modern toggle switch for selecting between demo and custom test files.
+              </p>
+              <p style={{ color: currentColors.textSecondary, fontSize: '0.9rem' }}>
+                <strong>States:</strong> 'demo' (default) | 'user'<br/>
+                <strong>Features:</strong> Animated transitions, validation, file upload integration<br/>
+                <strong>Validation:</strong> Requires file upload when 'user' mode is selected
+              </p>
+            </div>
           </div>
         </motion.section>
 
@@ -818,7 +871,7 @@ const Documentation = () => {
           transition={{ duration: 0.5, delay: 1.2 }}
         >
           <p style={{ color: currentColors.textSecondary, marginBottom: '0.5rem' }}>
-            © 2024 Generate Release Notes - SBI General Insurance. Built with ❤️ using React and modern web technologies.
+            © 2025 Generate Release Notes - SBI General Insurance. Built with ❤️ using React and modern web technologies.
           </p>
           <p style={{ color: currentColors.primary, fontWeight: '600', fontSize: '1.1rem' }}>
             Developed by <a 
