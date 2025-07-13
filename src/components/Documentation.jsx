@@ -821,7 +821,7 @@ const Documentation = () => {
           <h2 style={{ color: currentColors.primary, marginBottom: '1rem' }}>🤝 Contributing</h2>
           
           <p style={{ color: currentColors.textSecondary, marginBottom: '1rem' }}>
-            We welcome contributions to improve Generate XLS! Please follow these guidelines:
+            We welcome contributions to improve Generate Release Notes! Please follow these guidelines:
           </p>
           
           <div style={{ display: 'grid', gap: '1rem' }}>
