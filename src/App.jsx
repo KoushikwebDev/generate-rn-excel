@@ -28,7 +28,9 @@ const initialValues = {
   saveDetails: true,
   downloadZip: true, // changed from false to true
   testFileMode: 'demo', // 'demo' or 'user'
-  userTestFile: null
+  userTestFile: null,
+  rnType: 'frontend', // 'frontend' or 'backend'
+  filePaths: [''], // for backend, at least one
 };
 
 const validationSchema = Yup.object({
@@ -63,7 +65,29 @@ const validationSchema = Yup.object({
       return allowed.includes(value.type) || value.name.endsWith('.csv') || value.name.endsWith('.xls') || value.name.endsWith('.xlsx');
     }),
     otherwise: (schema) => schema.nullable()
-  })
+  }),
+  rnType: Yup.string().oneOf(['frontend', 'backend']).required(),
+  filePaths: Yup.array().when('rnType', {
+    is: 'backend',
+    then: (schema) => schema
+      .of(Yup.string().trim().required('Please enter file path'))
+      .min(1, 'Please enter file path')
+      .test('unique', 'Path should be unique', function (value) {
+        if (!Array.isArray(value)) return true;
+        const seen = new Map();
+        let hasDuplicate = false;
+        value.forEach((v, idx) => {
+          const norm = (v || '').trim().toLowerCase();
+          if (seen.has(norm)) {
+            hasDuplicate = true;
+          } else {
+            seen.set(norm, idx);
+          }
+        });
+        return !hasDuplicate;
+      }),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
 // Format dates for preview display
@@ -80,10 +104,14 @@ const FormComponent = () => {
   const { isDark, toggleTheme, colors } = useTheme();
   const currentColors = isDark ? colors.dark : colors.light;
   const [isMailModalOpen, setIsMailModalOpen] = useState(false);
+  const [filePaths, setFilePaths] = useState(initialValues.filePaths);
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
 
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: validationSchema,
+    validateOnChange: true,
+    validateOnBlur: true,
     onSubmit: async (values) => {
       try {
         // Check if user selected 'user' mode but didn't upload a file (only when downloadZip is true)
@@ -96,9 +124,9 @@ const FormComponent = () => {
         if (values.downloadZip) {
           await exportReleaseNoteZip({ ...values, userTestFile: values.testFileMode === 'user' ? values.userTestFile : null });
         } else {
-          exportReleaseNoteExcel(values, sbiLogo);
+      exportReleaseNoteExcel(values, sbiLogo);
         }
-        handleSaveDetails(values.saveDetails);
+      handleSaveDetails(values.saveDetails);
         // Reset only CR Number and CR Title
         formik.setFieldValue('crNumber', '');
         formik.setFieldValue('crTitle', '');
@@ -114,10 +142,7 @@ const FormComponent = () => {
 
   // save details
   function handleSaveDetails(isSaveDetails) {
-    const detailsToSave = formik.values;
-    delete detailsToSave.crNumber;
-    delete detailsToSave.crTitle;
-
+    const detailsToSave = { rnType: formik.values.rnType };
     isSaveDetails
       ? localStorage.setItem("formDetails", JSON.stringify(detailsToSave))
       : localStorage.removeItem("formDetails");
@@ -130,11 +155,35 @@ const FormComponent = () => {
       : null;
 
     if (savedFormDetails) {
-      savedFormDetails.crNumber = "";
-      savedFormDetails.crTitle = "";
-      formik.setValues(savedFormDetails);
+      const newValues = { ...initialValues, rnType: savedFormDetails.rnType || 'frontend' };
+      if (savedFormDetails.rnType === 'backend') {
+        newValues.filePaths = [''];
+      }
+      formik.setValues(newValues);
     }
   }, []);
+
+  // Sync filePaths state with formik
+  useEffect(() => {
+    setFilePaths(formik.values.filePaths);
+  }, [formik.values.filePaths]);
+
+  const handleAddFilePath = () => {
+    const updated = [...formik.values.filePaths, ''];
+    formik.setFieldValue('filePaths', updated);
+  };
+
+  const handleRemoveFilePath = (idx) => {
+    if (formik.values.filePaths.length <= 1) return; // Prevent removing last
+    const updated = formik.values.filePaths.filter((_, i) => i !== idx);
+    formik.setFieldValue('filePaths', updated);
+  };
+
+  const handleFilePathChange = (idx, value) => {
+    const updated = [...formik.values.filePaths];
+    updated[idx] = value;
+    formik.setFieldValue('filePaths', updated);
+  };
 
   // Check if form is valid and complete
   const isFormValid = () => {
@@ -300,15 +349,50 @@ const FormComponent = () => {
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.2 }}
       >
-        <motion.h2 
-          className="form-title"
-          style={{ color: currentColors.primary }}
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          Release Note Details
-        </motion.h2>
+        <motion.div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: isMobile ? '0.5rem' : '1.5rem' }}>
+          <motion.h2 
+            className="form-title"
+            style={{ color: currentColors.primary, margin: 0, padding: 0, lineHeight: 1.2 }}
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            {isMobile ? 'RN Details' : 'Release Note Details'}
+          </motion.h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.5rem' : '1rem', marginTop: isMobile ? 0 : '0.2rem' }}>
+            <span style={{ fontWeight: 500, color: currentColors.text, opacity: formik.values.rnType === 'frontend' ? 1 : 0.6 }}>Frontend</span>
+            <div 
+              onClick={() => formik.setFieldValue('rnType', formik.values.rnType === 'frontend' ? 'backend' : 'frontend')}
+              style={{
+                position: 'relative',
+                width: isMobile ? '2.2rem' : '3rem',
+                height: isMobile ? '1.1rem' : '1.5rem',
+                backgroundColor: formik.values.rnType === 'backend' ? currentColors.primary : currentColors.inputBorder,
+                borderRadius: '1rem',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0.125rem'
+              }}
+            >
+              <motion.div
+                style={{
+                  width: isMobile ? '0.9rem' : '1.25rem',
+                  height: isMobile ? '0.9rem' : '1.25rem',
+                  backgroundColor: '#ffffff',
+                  borderRadius: '50%',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                }}
+                animate={{
+                  x: formik.values.rnType === 'backend' ? (isMobile ? '1.1rem' : '1.5rem') : '0rem'
+                }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              />
+            </div>
+            <span style={{ fontWeight: 500, color: currentColors.text, opacity: formik.values.rnType === 'backend' ? 1 : 0.6 }}>Backend</span>
+          </div>
+        </motion.div>
 
         {/* Developer Section */}
         <motion.div
@@ -317,9 +401,9 @@ const FormComponent = () => {
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           <h3 className="section-title" style={{ color: currentColors.text }}>Developer Info:</h3>
-          {renderInput("developerName", "Developer Name")}
-          {renderInput("developerEmail", "Developer Email", "email")}
-          {renderInput("developerPhone", "Developer Phone")}
+        {renderInput("developerName", "Developer Name")}
+        {renderInput("developerEmail", "Developer Email", "email")}
+        {renderInput("developerPhone", "Developer Phone")}
         </motion.div>
 
         {/* CR Title */}
@@ -329,9 +413,63 @@ const FormComponent = () => {
           transition={{ duration: 0.5, delay: 0.5 }}
         >
           <h3 className="section-title" style={{ color: currentColors.text }}>CR Details:</h3>
-          {renderInput("crNumber", "CR Number")}
-          {renderInput("crTitle", "CR Title")}
+        {renderInput("crNumber", "CR Number")}
+        {renderInput("crTitle", "CR Title")}
         </motion.div>
+
+        {/* File Paths for Backend - Only show when Backend is selected */}
+        {formik.values.rnType === 'backend' && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{ marginBottom: '1.5rem' }}
+          >
+            <label style={{ fontWeight: 600, color: currentColors.text, marginBottom: '0.5rem', display: 'block' }}>File Path(s)</label>
+            {(formik.values.filePaths || ['']).map((path, idx, arr) => {
+              let fieldError = undefined;
+              // Required error
+              if (formik.touched.filePaths && Array.isArray(formik.errors.filePaths)) {
+                fieldError = formik.errors.filePaths[idx];
+              }
+              // Uniqueness error: show under all but the first occurrence
+              if (
+                formik.touched.filePaths &&
+                typeof formik.errors.filePaths === 'string' &&
+                formik.errors.filePaths === 'Path should be unique'
+              ) {
+                const norm = (path || '').trim().toLowerCase();
+                const firstIdx = arr.findIndex(p => (p || '').trim().toLowerCase() === norm);
+                if (firstIdx !== idx) {
+                  fieldError = 'Path should be unique';
+                }
+              }
+              return (
+                <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', marginBottom: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input
+                      type="text"
+                      value={path}
+                      onChange={e => handleFilePathChange(idx, e.target.value)}
+                      onBlur={formik.handleBlur}
+                      className="input-field"
+                      style={{ flex: 1, backgroundColor: currentColors.inputBg, border: `1px solid ${currentColors.inputBorder}`, color: currentColors.text, boxShadow: currentColors.shadow }}
+                    />
+                    {idx === 0 ? (
+                      <button type="button" onClick={handleAddFilePath} style={{ background: currentColors.gradient, color: '#fff', border: 'none', borderRadius: '0.4rem', padding: '0.25rem 0.5rem', cursor: 'pointer', fontWeight: 600, fontSize: '1rem', lineHeight: 1 }}>+</button>
+                    ) : (
+                      <button type="button" onClick={() => handleRemoveFilePath(idx)} style={{ background: '#dc2626', color: '#fff', border: 'none', borderRadius: '0.4rem', padding: '0.25rem 0.5rem', cursor: 'pointer', fontWeight: 600, fontSize: '1rem', lineHeight: 1 }}>–</button>
+                    )}
+                  </div>
+                  {/* Show error for this field if present */}
+                  {fieldError && (
+                    <motion.p style={{ color: currentColors.error, fontSize: '0.9rem', marginTop: '0.1rem', marginBottom: 0 }}>{fieldError}</motion.p>
+                  )}
+                </div>
+              );
+            })}
+          </motion.div>
+        )}
 
         {/* Dates */}
         <motion.div 
@@ -351,9 +489,9 @@ const FormComponent = () => {
           transition={{ duration: 0.5, delay: 0.7 }}
         >
           <h3 className="section-title" style={{ color: currentColors.text }}>Supervisor Info:</h3>
-          {renderInput("supervisorName", "Supervisor Name")}
-          {renderInput("supervisorEmail", "Supervisor Email", "email")}
-          {renderInput("supervisorPhone", "Supervisor Phone")}
+        {renderInput("supervisorName", "Supervisor Name")}
+        {renderInput("supervisorEmail", "Supervisor Email", "email")}
+        {renderInput("supervisorPhone", "Supervisor Phone")}
         </motion.div>
 
         {/* Test File Switch - Only show when Download Zip is checked */}
@@ -499,16 +637,16 @@ const FormComponent = () => {
           transition={{ duration: 0.5, delay: 0.8 }}
         >
           {/* Save Details Checkbox */}
-          <div className="save-checkbox">
-            <input
-              type="checkbox"
-              id="saveDetails"
-              name="saveDetails"
-              checked={formik.values.saveDetails}
-              onChange={formik.handleChange}
-            />
+        <div className="save-checkbox">
+          <input
+            type="checkbox"
+            id="saveDetails"
+            name="saveDetails"
+            checked={formik.values.saveDetails}
+            onChange={formik.handleChange}
+          />
             <label htmlFor="saveDetails" style={{ color: currentColors.text }}>Save details for next time</label>
-          </div>
+        </div>
 
           {/* Download Zip Checkbox */}
           <div className="save-checkbox">
@@ -662,12 +800,12 @@ const FormComponent = () => {
             <h3 className="preview-subtitle" style={{ color: currentColors.text }}>Dates</h3>
             <p style={{ color: currentColors.textSecondary }}>
               <strong style={{ color: currentColors.text }}>Release Date:</strong>{" "}
-              {formatDate(formik.values.releaseDate) || "-"}
-            </p>
+            {formatDate(formik.values.releaseDate) || "-"}
+          </p>
             <p style={{ color: currentColors.textSecondary }}>
               <strong style={{ color: currentColors.text }}>SIT Pass Date:</strong>{" "}
-              {formatDate(formik.values.sitPassDate) || "-"}
-            </p>
+            {formatDate(formik.values.sitPassDate) || "-"}
+          </p>
           </motion.div>
 
           <motion.div 

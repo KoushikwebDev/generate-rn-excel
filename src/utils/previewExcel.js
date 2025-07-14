@@ -1130,7 +1130,12 @@ const generateEditableReleaseNoteHTML = (params) => {
           <td><input type="text" value="${params.crNumber || ""}" data-field="crNumber" /></td>
           <td><input type="text" value="1" readonly /></td>
           <td><input type="text" value="react build" readonly /></td>
-          <td><input type="text" value="react build" readonly /></td>
+          <td>
+            ${params.rnType === 'backend' && Array.isArray(params.filePaths) && params.filePaths.length > 0
+              ? params.filePaths.map((p, i) => `<div style='display:flex;align-items:center;gap:0.5rem;margin-bottom:2px;'><span style='font-weight:bold;'>${i + 1}.</span><input type='text' value='${p}' data-field='filePath${i}' style='width:90%;padding:2px 6px;border-radius:4px;border:1px solid #ccc;font-size:0.95em;'/></div>`).join('')
+              : `<input type='text' value='react build' readonly />`
+            }
+          </td>
           <td><input type="text" value="react build" readonly /></td>
           <td><input type="text" value="rollback.txt" readonly /></td>
           <td><input type="text" value="" data-field="dependencyNote" /></td>
@@ -1142,51 +1147,53 @@ const generateEditableReleaseNoteHTML = (params) => {
 
 // Helper function to generate editable HTML for Test Cases
 const generateEditableTestCasesHTML = (params) => {
-  const formatDate = (date) => {
-    if (!date) return "";
-    try {
-      return new Date(date).toLocaleDateString("en-GB");
-    } catch {
-      return "";
-    }
-  };
-
   return `
     <div style="text-align: center; margin-bottom: 20px;">
-      <h2 style="color: #4F9A94;">${params.crNumber} - Test Cases</h2>
+      <h2 style="color: #000;">${params.crNumber} - Test Cases</h2>
     </div>
-    
     <table class="excel-table">
       <thead>
         <tr>
-          <th>CRNumber/PMNumber</th>
-          <th>CRDetails/PMDetails</th>
-          <th>Description</th>
-          <th>Priority</th>
-          <th>Pre-requisite</th>
-          <th>Expected Result</th>
-          <th>Regression</th>
+          <th colspan="17" style="background:#fff;font-size:1.1rem;font-weight:bold;text-align:center;height:30px;">${params.crNumber} - Test Cases</th>
+        </tr>
+        <tr>
+          <th colspan="17" style="background:#f0f0f0;color:#000;font-size:1rem;font-weight:bold;text-align:center;height:25px;">${params.crNumber} | ${params.crTitle}</th>
+        </tr>
+        <tr>
+          <th>Test Scenario</th>
+          <th>Scenario Id</th>
+          <th>Subject</th>
+          <th>Common/product</th>
+          <th>Business Rule/Test Cases</th>
+          <th>Test Case Id</th>
           <th>Reference</th>
-          <th>Test Date</th>
+          <th>Regression</th>
+          <th>Priority</th>
           <th>Test Case Status</th>
+          <th>Pre-requisite</th>
+          <th>Test Data</th>
+          <th>Expected Result</th>
+          <th>TestCaseId_TestCaseStatus</th>
+          <th>Designer</th>
           <th>Area</th>
           <th>Type</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><input type="text" value="${params.crNumber || ""}" data-field="crNumber" /></td>
-          <td><input type="text" value="${params.crTitle || ""}" data-field="crTitle" /></td>
-          <td><input type="text" value="Verify ${params.crTitle || "functionality"} in Customer Portal" data-field="description" /></td>
-          <td><input type="text" value="" data-field="priority" /></td>
-          <td><input type="text" value="" data-field="prerequisite" /></td>
-          <td><input type="text" value="Pass" readonly /></td>
-          <td><input type="text" value="" data-field="regression" /></td>
+          <td colspan="2"><input type="text" value="${params.crTitle || ''}" data-field="testScenario" /></td>
+          <td colspan="2"><input type="text" value="${params.crTitle || ''}" data-field="scenarioId" /></td>
+          <td colspan="2"><input type="text" value="${params.crTitle || ''}" data-field="businessRule" /></td>
           <td><input type="text" value="" data-field="reference" /></td>
-          <td><input type="text" value="${formatDate(params.sitPassDate) || new Date().toLocaleDateString("en-GB")}" data-field="testDate" /></td>
-          <td><input type="text" value="Pass" readonly /></td>
-          <td><input type="text" value="Customer Portal" readonly /></td>
-          <td><input type="text" value="Manual" readonly /></td>
+          <td><input type="text" value="" data-field="regression" /></td>
+          <td><input type="text" value="" data-field="priority" /></td>
+          <td><input type="text" value="Pass" data-field="testCaseStatus" readonly /></td>
+          <td><input type="text" value="" data-field="preRequisite" /></td>
+          <td><input type="text" value="" data-field="testData" /></td>
+          <td colspan="2"><input type="text" value="${params.crTitle || ''}" data-field="expectedResult" /></td>
+          <td><input type="text" value="" data-field="designer" /></td>
+          <td><input type="text" value="Customer Portal" data-field="area" readonly /></td>
+          <td><input type="text" value="Manual" data-field="type" readonly /></td>
         </tr>
       </tbody>
     </table>

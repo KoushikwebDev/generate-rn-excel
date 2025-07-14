@@ -425,20 +425,25 @@ const generateTestCasesBuffer = async (params) => {
   const wb = new (await import("exceljs")).Workbook();
   const ws = wb.addWorksheet("Test Cases");
 
-  // Set column widths
+  // Set column widths for 17 columns
   ws.columns = [
-    { width: 15 }, // CRNumber/PMNumber
-    { width: 25 }, // CRDetails/PMDetails
-    { width: 35 }, // CR Description
-    { width: 12 }, // Priority
-    { width: 20 }, // Pre-requisite
-    { width: 25 }, // Expected Result
+    { width: 18 }, // Test Scenario
+    { width: 18 }, // Scenario Id
+    { width: 18 }, // Subject
+    { width: 18 }, // Common/product
+    { width: 22 }, // Business Rule/Test Cases
+    { width: 18 }, // Test Case Id
+    { width: 15 }, // Reference
     { width: 15 }, // Regression
-    { width: 20 }, // Reference
-    { width: 15 }, // Test Date
-    { width: 15 }, // Test Case Status
-    { width: 20 }, // Area
-    { width: 12 }, // Type
+    { width: 15 }, // Priority
+    { width: 18 }, // Test Case Status
+    { width: 18 }, // Pre-requisite
+    { width: 18 }, // Test Data
+    { width: 22 }, // Expected Result
+    { width: 22 }, // TestCaseId_TestCaseStatus
+    { width: 15 }, // Designer
+    { width: 18 }, // Area
+    { width: 15 }, // Type
   ];
 
   // Styles
@@ -472,12 +477,12 @@ const generateTestCasesBuffer = async (params) => {
   };
 
   // Add title and project info
-  ws.mergeCells('A1:L1');
+  ws.mergeCells('A1:Q1');
   ws.getCell('A1').value = `${params.crNumber} - Test Cases`;
   ws.getCell('A1').style = titleStyle;
   ws.getRow(1).height = 30;
 
-  ws.mergeCells('A2:L2');
+  ws.mergeCells('A2:Q2');
   ws.getCell('A2').value = `${params.crNumber} | ${params.crTitle}`;
   ws.getCell('A2').style = {
     font: { bold: true, size: 11, color: { argb: "FF000000" } },
@@ -486,64 +491,67 @@ const generateTestCasesBuffer = async (params) => {
   };
   ws.getRow(2).height = 25;
 
-  // Add headers
+  // Add headers (row 4)
   const headers = [
-    "CRNumber/PMNumber",
-    "CRDetails/PMDetails", 
-    "Description",
-    "Priority",
-    "Pre-requisite",
-    "Expected Result",
-    "Regression",
+    "Test Scenario",
+    "Scenario Id",
+    "Subject",
+    "Common/product",
+    "Business Rule/Test Cases",
+    "Test Case Id",
     "Reference",
-    "Test Date",
+    "Regression",
+    "Priority",
     "Test Case Status",
+    "Pre-requisite",
+    "Test Data",
+    "Expected Result",
+    "TestCaseId_TestCaseStatus",
+    "Designer",
     "Area",
     "Type"
   ];
-
   headers.forEach((header, index) => {
     ws.getCell(4, index + 1).value = header;
     ws.getCell(4, index + 1).style = headerStyle;
   });
   ws.getRow(4).height = 25;
 
-  // Generate single test case row with the specified structure
-  const testCase = {
-    crNumber: params.crNumber,
-    crDetails: params.crTitle,
-    crDescription: `Verify ${params.crTitle} functionality in Customer Portal`,
-    priority: "",
-    prerequisite: "",
-    expectedResult: "Pass",
-    regression: "",
-    reference: "",
-    testDate: params.sitPassDate ? new Date(params.sitPassDate).toLocaleDateString() : new Date().toLocaleDateString(),
-    testCaseStatus: "Pass",
-    area: "Customer Portal",
-    type: "Manual"
-  };
+  // Add single test case row (row 5)
+  // Merge cells as per requirements
+  // 1 & 2: cr title (merged)
+  ws.mergeCells('A5:B5');
+  ws.getCell('A5').value = params.crTitle;
+  // 3 & 4: cr title (merged)
+  ws.mergeCells('C5:D5');
+  ws.getCell('C5').value = params.crTitle;
+  // 5 & 6: cr title (merged)
+  ws.mergeCells('E5:F5');
+  ws.getCell('E5').value = params.crTitle;
+  // 7,8,9: blank
+  ws.getCell('G5').value = '';
+  ws.getCell('H5').value = '';
+  ws.getCell('I5').value = '';
+  // 10: Pass
+  ws.getCell('J5').value = 'Pass';
+  // 11,12: blank
+  ws.getCell('K5').value = '';
+  ws.getCell('L5').value = '';
+  // 13 & 14: cr title (merged)
+  ws.mergeCells('M5:N5');
+  ws.getCell('M5').value = params.crTitle;
+  // 15: blank
+  ws.getCell('O5').value = '';
+  // 16: Customer Portal
+  ws.getCell('P5').value = 'Customer Portal';
+  // 17: Manual
+  ws.getCell('Q5').value = 'Manual';
 
-  // Add single test case row
-  const row = 5;
-  ws.getCell(row, 1).value = testCase.crNumber;
-  ws.getCell(row, 2).value = testCase.crDetails;
-  ws.getCell(row, 3).value = testCase.crDescription;
-  ws.getCell(row, 4).value = testCase.priority;
-  ws.getCell(row, 5).value = testCase.prerequisite;
-  ws.getCell(row, 6).value = testCase.expectedResult;
-  ws.getCell(row, 7).value = testCase.regression;
-  ws.getCell(row, 8).value = testCase.reference;
-  ws.getCell(row, 9).value = testCase.testDate;
-  ws.getCell(row, 10).value = testCase.testCaseStatus;
-  ws.getCell(row, 11).value = testCase.area;
-  ws.getCell(row, 12).value = testCase.type;
-
-  // Apply styles to all cells in the row
-  for (let col = 1; col <= 12; col++) {
-    ws.getCell(row, col).style = dataStyle;
+  // Apply data style to all cells in the row (including merged)
+  for (let col = 1; col <= 17; col++) {
+    ws.getCell(5, col).style = dataStyle;
   }
-  ws.getRow(row).height = 30;
+  ws.getRow(5).height = 30;
 
   return await wb.xlsx.writeBuffer();
 }; 

@@ -392,6 +392,23 @@ const Documentation = () => {
                 <li>Cross-browser compatibility</li>
               </ul>
             </div>
+
+            <div style={{ 
+              padding: '1rem', 
+              backgroundColor: currentColors.background, 
+              borderRadius: '0.5rem',
+              border: `1px solid ${currentColors.border}`
+            }}>
+              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>🗂️ Backend File Path Management</h3>
+              <ul style={{ color: currentColors.textSecondary, marginLeft: '1rem' }}>
+                <li>Toggle between Frontend and Backend modes at the top of the form</li>
+                <li>When Backend is selected, add one or more file paths for impacted files/tables</li>
+                <li>Each file path must be unique and not empty</li>
+                <li>Validation ensures no duplicate or empty paths are allowed</li>
+                <li>Paths are shown as a numbered list in the Release Note export and preview</li>
+                <li>Remove or add file path fields dynamically with plus/minus buttons</li>
+              </ul>
+            </div>
           </div>
         </motion.section>
 
@@ -659,6 +676,18 @@ const Documentation = () => {
               <p style={{ color: currentColors.textSecondary }}>
                 Enable "Save details for next time" to automatically populate form fields in future sessions. 
                 Only CR number and title are reset after successful generation.
+              </p>
+            </div>
+
+            <div style={{ 
+              padding: '1rem', 
+              backgroundColor: currentColors.background, 
+              borderRadius: '0.5rem',
+              border: `1px solid ${currentColors.border}`
+            }}>
+              <h3 style={{ color: currentColors.text, marginBottom: '0.5rem' }}>Backend File Path Entry</h3>
+              <p style={{ color: currentColors.textSecondary }}>
+                Use the toggle at the top of the form to switch to Backend mode. Enter one or more impacted file paths in the provided fields. Each path must be unique and not empty. Use the plus (+) button to add more paths and the minus (–) button to remove them. These paths will appear as a numbered list in the Release Note export and preview.
               </p>
             </div>
           </div>
