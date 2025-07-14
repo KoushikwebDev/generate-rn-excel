@@ -453,6 +453,7 @@ const FormComponent = () => {
                       onChange={e => handleFilePathChange(idx, e.target.value)}
                       onBlur={formik.handleBlur}
                       className="input-field"
+                      placeholder="File path"
                       style={{ flex: 1, backgroundColor: currentColors.inputBg, border: `1px solid ${currentColors.inputBorder}`, color: currentColors.text, boxShadow: currentColors.shadow }}
                     />
                     {idx === 0 ? (
