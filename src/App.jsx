@@ -725,15 +725,39 @@ const FormComponent = () => {
           style={{
             background: currentColors.gradient,
             color: '#ffffff',
-            boxShadow: currentColors.shadow
+            boxShadow: currentColors.shadow,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.7rem',
+            opacity: formik.isSubmitting ? 0.7 : 1
           }}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 1.0 }}
+          disabled={formik.isSubmitting}
         >
-          {formik.values.downloadZip ? "Download Release Package (ZIP)" : "Download Release Note XLSX"}
+          {formik.isSubmitting ? (
+            <span style={{
+              width: '1.2em',
+              height: '1.2em',
+              border: '2.5px solid #fff',
+              borderTop: '2.5px solid #4F9A94',
+              borderRadius: '50%',
+              display: 'inline-block',
+              animation: 'spin 0.8s linear infinite',
+            }} />
+          ) : (
+            formik.values.downloadZip ? "Download Release Package (ZIP)" : "Download Release Note XLSX"
+          )}
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
         </motion.button>
       </motion.form>
 
@@ -748,15 +772,42 @@ const FormComponent = () => {
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.4 }}
       >
-        <motion.h2 
-          className="preview-title"
-          style={{ color: currentColors.primary }}
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-        >
-          Preview Filled Details
-        </motion.h2>
+        {/* Title and Copy Mail Body button row */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem' }}>
+          <motion.h2 
+            className="preview-title"
+            style={{ color: currentColors.primary, margin: 0 }}
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            Preview Filled Details
+          </motion.h2>
+          <motion.button
+            onClick={() => setIsMailModalOpen(true)}
+            style={{
+              background: currentColors.gradient,
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '0.75rem',
+              padding: '0.75rem 1.5rem',
+              cursor: 'pointer',
+              fontWeight: '600',
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              boxShadow: currentColors.shadow
+            }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            📧 Copy Mail Body
+          </motion.button>
+        </div>
         
         <AnimatePresence>
           <motion.div 
@@ -791,6 +842,44 @@ const FormComponent = () => {
               <strong style={{ color: currentColors.text }}>CR Title:</strong> {formik.values.crTitle || "-"}
             </p>
           </motion.div>
+
+          {/* File Paths Preview for Backend (moved here) */}
+          {formik.values.rnType === 'backend' && (
+            <motion.div 
+              className="preview-group"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.75 }}
+            >
+              <h3 className="preview-subtitle" style={{ color: currentColors.text }}>File Paths</h3>
+              {formik.values.filePaths && formik.values.filePaths.length > 0 ? (
+                <ol style={{ margin: 0, paddingLeft: '1.2rem', color: currentColors.textSecondary }}>
+                  {formik.values.filePaths.map((p, i) => (
+                    <li key={i} style={{ marginBottom: '0.2rem', wordBreak: 'break-all' }}>{p}</li>
+                  ))}
+                </ol>
+              ) : (
+                <p style={{ color: currentColors.textSecondary }}>No file paths provided.</p>
+              )}
+            </motion.div>
+          )}
+
+          {/* Test Case File Name Preview (after file paths) */}
+          {formik.values.rnType === 'backend' && formik.values.downloadZip && (
+            <motion.div 
+              className="preview-group"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+            >
+              <h3 className="preview-subtitle" style={{ color: currentColors.text }}>Test Case File Name:</h3>
+              <p style={{ color: currentColors.textSecondary }}>
+                {formik.values.testFileMode === 'demo'
+                  ? `Test_Cases-${formik.values.crNumber || 'CR'}-${new Date().toISOString().split('T')[0]}.xlsx`
+                  : (formik.values.userTestFile ? formik.values.userTestFile.name : 'No file uploaded')}
+              </p>
+            </motion.div>
+          )}
 
           <motion.div 
             className="preview-group"
@@ -828,41 +917,6 @@ const FormComponent = () => {
           </motion.div>
         </AnimatePresence>
 
-        {/* Copy Mail Body Button - Bottom */}
-        <motion.div
-          style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            marginTop: '2rem',
-            paddingTop: '1.5rem',
-            borderTop: `1px solid ${currentColors.border}`
-          }}
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1.0 }}
-        >
-          <motion.button
-            onClick={() => setIsMailModalOpen(true)}
-            style={{
-              background: currentColors.gradient,
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '0.75rem',
-              padding: '0.75rem 1.5rem',
-              cursor: 'pointer',
-              fontWeight: '600',
-              fontSize: '0.9rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              boxShadow: currentColors.shadow
-            }}
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            📧 Copy Mail Body
-          </motion.button>
-        </motion.div>
       </motion.div>
 
       {/* Mail Modal */}
