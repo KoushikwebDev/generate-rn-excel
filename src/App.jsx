@@ -456,9 +456,13 @@ const FormComponent = () => {
                       placeholder="File path"
                       style={{ flex: 1, backgroundColor: currentColors.inputBg, border: `1px solid ${currentColors.inputBorder}`, color: currentColors.text, boxShadow: currentColors.shadow }}
                     />
-                    {idx === 0 ? (
+                    {arr.length === 1 && idx === 0 && (
                       <button type="button" onClick={handleAddFilePath} style={{ background: currentColors.gradient, color: '#fff', border: 'none', borderRadius: '0.4rem', padding: '0.25rem 0.5rem', cursor: 'pointer', fontWeight: 600, fontSize: '1rem', lineHeight: 1 }}>+</button>
-                    ) : (
+                    )}
+                    {arr.length > 1 && idx === arr.length - 1 && (
+                      <button type="button" onClick={handleAddFilePath} style={{ background: currentColors.gradient, color: '#fff', border: 'none', borderRadius: '0.4rem', padding: '0.25rem 0.5rem', cursor: 'pointer', fontWeight: 600, fontSize: '1rem', lineHeight: 1 }}>+</button>
+                    )}
+                    {arr.length > 1 && idx !== arr.length - 1 && (
                       <button type="button" onClick={() => handleRemoveFilePath(idx)} style={{ background: '#dc2626', color: '#fff', border: 'none', borderRadius: '0.4rem', padding: '0.25rem 0.5rem', cursor: 'pointer', fontWeight: 600, fontSize: '1rem', lineHeight: 1 }}>–</button>
                     )}
                   </div>
