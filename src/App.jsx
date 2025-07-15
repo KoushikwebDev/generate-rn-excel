@@ -808,7 +808,7 @@ const FormComponent = () => {
             📧 Copy Mail Body
           </motion.button>
         </div>
-        
+
         <AnimatePresence>
           <motion.div 
             className="preview-group"
@@ -865,7 +865,7 @@ const FormComponent = () => {
           )}
 
           {/* Test Case File Name Preview (after file paths) */}
-          {formik.values.rnType === 'backend' && formik.values.downloadZip && (
+          {formik.values.downloadZip && (
             <motion.div 
               className="preview-group"
               initial={{ opacity: 0, y: 20 }}
