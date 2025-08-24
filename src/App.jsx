@@ -127,9 +127,10 @@ const FormComponent = () => {
           exportReleaseNoteExcel(values, sbiLogo);
         }
         handleSaveDetails(values.saveDetails);
+        setIsMailModalOpen(true);
         // Reset only CR Number and CR Title
-        formik.setFieldValue('crNumber', '');
-        formik.setFieldValue('crTitle', '');
+        // formik.setFieldValue('crNumber', '');
+        // formik.setFieldValue('crTitle', '');
         if (values.downloadZip && values.testFileMode === 'user') {
           formik.setFieldValue('userTestFile', null);
         }
