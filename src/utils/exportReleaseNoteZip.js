@@ -26,17 +26,17 @@ export const exportReleaseNoteZip = async (params) => {
 
   const zip = new JSZip();
 
-  // Create folder structure
-  const crFolder = zip.folder(crNumber);
-  const releaseNoteFolder = crFolder.folder("ReleaseNote");
-  const objectsFolder = crFolder.folder("Objects");
-  const rollbackPlanFolder = crFolder.folder("RollBack_Plan");
+  // Create folder structure with explicit paths to avoid Windows nesting issues
+  const basePath = crNumber;
+
+  // Create folders by adding files with explicit paths
+  // This approach is more reliable across different operating systems
 
   try {
     // 1. Generate and add Release Note Excel
     const releaseNoteBuffer = await generateReleaseNoteBuffer(params);
-    releaseNoteFolder.file(
-      `Release-Note-${crNumber}-${new Date().toISOString().split('T')[0]}.xlsx`,
+    zip.file(
+      `${basePath}/ReleaseNote/Release-Note-${crNumber}-${new Date().toISOString().split('T')[0]}.xlsx`,
       releaseNoteBuffer
     );
 
@@ -50,12 +50,12 @@ export const exportReleaseNoteZip = async (params) => {
         reader.onerror = reject;
         reader.readAsArrayBuffer(userTestFile);
       });
-      crFolder.file(userTestFile.name, fileBuffer);
+      zip.file(`${basePath}/${userTestFile.name}`, fileBuffer);
     } else {
       // Otherwise, generate and include the demo test case file
       const testCasesBuffer = await generateTestCasesBuffer(params);
-      crFolder.file(
-        `Test_Cases-${crNumber}-${new Date().toISOString().split('T')[0]}.xlsx`,
+      zip.file(
+        `${basePath}/Test_Cases-${crNumber}-${new Date().toISOString().split('T')[0]}.xlsx`,
         testCasesBuffer
       );
     }
@@ -65,14 +65,14 @@ export const exportReleaseNoteZip = async (params) => {
       const buildZipResponse = await fetch(STATIC_FILES.buildZip);
       if (buildZipResponse.ok) {
         const buildZipBlob = await buildZipResponse.blob();
-        objectsFolder.file("build.zip", buildZipBlob);
+        zip.file(`${basePath}/Objects/build.zip`, buildZipBlob);
       } else {
         console.warn("Could not load build.zip, creating empty file");
-        objectsFolder.file("build.zip", "");
+        zip.file(`${basePath}/Objects/build.zip`, "");
       }
     } catch (error) {
       console.warn("Error loading build.zip:", error);
-      objectsFolder.file("build.zip", "");
+      zip.file(`${basePath}/Objects/build.zip`, "");
     }
 
     // 4. Add static Rollback.txt to RollBack_Plan folder
@@ -80,18 +80,25 @@ export const exportReleaseNoteZip = async (params) => {
       const rollbackResponse = await fetch(STATIC_FILES.rollbackTxt);
       if (rollbackResponse.ok) {
         const rollbackText = await rollbackResponse.text();
-        rollbackPlanFolder.file("Rollback.txt", rollbackText);
+        zip.file(`${basePath}/RollBack_Plan/Rollback.txt`, rollbackText);
       } else {
         console.warn("Could not load Rollback.txt, using default content");
-        rollbackPlanFolder.file("Rollback.txt", "we are keeping backup of old file on server with date. So if anything wrong then we just replace new file with old one.");
+        zip.file(`${basePath}/RollBack_Plan/Rollback.txt`, "we are keeping backup of old file on server with date. So if anything wrong then we just replace new file with old one.");
       }
     } catch (error) {
       console.warn("Error loading Rollback.txt:", error);
-      rollbackPlanFolder.file("Rollback.txt", "we are keeping backup of old file on server with date. So if anything wrong then we just replace new file with old one.");
+      zip.file(`${basePath}/RollBack_Plan/Rollback.txt`, "we are keeping backup of old file on server with date. So if anything wrong then we just replace new file with old one.");
     }
 
-    // Generate and download the zip file
-    const zipBlob = await zip.generateAsync({ type: "blob" });
+    // Generate and download the zip file with Windows compatibility
+    const zipBlob = await zip.generateAsync({
+      type: "blob",
+      compression: "DEFLATE",
+      compressionOptions: {
+        level: 6
+      },
+      platform: "UNIX" // This helps with cross-platform compatibility
+    });
     const fileName = `${crNumber}.zip`;
     saveAs(zipBlob, fileName);
 
@@ -182,7 +189,7 @@ const generateReleaseNoteBuffer = async (params) => {
 
     // Merge cells for logo area (A1-B1)
     ws.mergeCells(`A${currentRow}:B${currentRow}`);
-    
+
     // Merge cells for title area (C1-J1)
     ws.mergeCells(`C${currentRow}:J${currentRow}`);
 
