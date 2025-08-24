@@ -120,13 +120,13 @@ const FormComponent = () => {
           alert("Please upload a test file when selecting 'I have Test File' mode.");
           return;
         }
-        
+
         if (values.downloadZip) {
           await exportReleaseNoteZip({ ...values, userTestFile: values.testFileMode === 'user' ? values.userTestFile : null });
         } else {
-      exportReleaseNoteExcel(values, sbiLogo);
+          exportReleaseNoteExcel(values, sbiLogo);
         }
-      handleSaveDetails(values.saveDetails);
+        handleSaveDetails(values.saveDetails);
         // Reset only CR Number and CR Title
         formik.setFieldValue('crNumber', '');
         formik.setFieldValue('crTitle', '');
@@ -187,12 +187,12 @@ const FormComponent = () => {
 
   // Check if form is valid and complete
   const isFormValid = () => {
-    return formik.isValid && 
-           formik.values.developerName && 
-           formik.values.developerEmail && 
-           formik.values.developerPhone && 
-           formik.values.crNumber && 
-           formik.values.crTitle;
+    return formik.isValid &&
+      formik.values.developerName &&
+      formik.values.developerEmail &&
+      formik.values.developerPhone &&
+      formik.values.crNumber &&
+      formik.values.crTitle;
   };
 
   // Handle preview button clicks
@@ -237,7 +237,7 @@ const FormComponent = () => {
     const isSupervisorField = name.startsWith("supervisor");
 
     return (
-      <motion.div 
+      <motion.div
         className="form-group mb-4"
         whileHover={{ scale: 1.01 }}
         transition={{ duration: 0.2 }}
@@ -273,7 +273,7 @@ const FormComponent = () => {
           }}
         />
         {formik.touched[name] && formik.errors[name] && (
-          <motion.p 
+          <motion.p
             className="error-text"
             style={{ color: currentColors.error }}
             initial={{ opacity: 0, y: -10 }}
@@ -288,7 +288,7 @@ const FormComponent = () => {
   };
 
   const renderDatePicker = (name, label) => (
-    <motion.div 
+    <motion.div
       className="form-group mb-4"
       whileHover={{ scale: 1.01 }}
       transition={{ duration: 0.2 }}
@@ -311,7 +311,7 @@ const FormComponent = () => {
         }}
       />
       {formik.touched[name] && formik.errors[name] && (
-        <motion.p 
+        <motion.p
           className="error-text"
           style={{ color: currentColors.error }}
           initial={{ opacity: 0, y: -10 }}
@@ -325,7 +325,7 @@ const FormComponent = () => {
   );
 
   return (
-    <motion.div 
+    <motion.div
       className="app-container"
       style={{
         backgroundColor: currentColors.background,
@@ -337,8 +337,8 @@ const FormComponent = () => {
     >
 
 
-      <motion.form 
-        onSubmit={formik.handleSubmit} 
+      <motion.form
+        onSubmit={formik.handleSubmit}
         className="form-section"
         style={{
           backgroundColor: currentColors.surface,
@@ -350,7 +350,7 @@ const FormComponent = () => {
         transition={{ duration: 0.6, delay: 0.2 }}
       >
         <motion.div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: isMobile ? '0.5rem' : '1.5rem' }}>
-          <motion.h2 
+          <motion.h2
             className="form-title"
             style={{ color: currentColors.primary, margin: 0, padding: 0, lineHeight: 1.2 }}
             initial={{ y: -20, opacity: 0 }}
@@ -361,7 +361,7 @@ const FormComponent = () => {
           </motion.h2>
           <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.5rem' : '1rem', marginTop: isMobile ? 0 : '0.2rem' }}>
             <span style={{ fontWeight: 500, color: currentColors.text, opacity: formik.values.rnType === 'frontend' ? 1 : 0.6 }}>Frontend</span>
-            <div 
+            <div
               onClick={() => formik.setFieldValue('rnType', formik.values.rnType === 'frontend' ? 'backend' : 'frontend')}
               style={{
                 position: 'relative',
@@ -401,9 +401,9 @@ const FormComponent = () => {
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           <h3 className="section-title" style={{ color: currentColors.text }}>Developer Info:</h3>
-        {renderInput("developerName", "Developer Name")}
-        {renderInput("developerEmail", "Developer Email", "email")}
-        {renderInput("developerPhone", "Developer Phone")}
+          {renderInput("developerName", "Developer Name")}
+          {renderInput("developerEmail", "Developer Email", "email")}
+          {renderInput("developerPhone", "Developer Phone")}
         </motion.div>
 
         {/* CR Title */}
@@ -413,8 +413,8 @@ const FormComponent = () => {
           transition={{ duration: 0.5, delay: 0.5 }}
         >
           <h3 className="section-title" style={{ color: currentColors.text }}>CR Details:</h3>
-        {renderInput("crNumber", "CR Number")}
-        {renderInput("crTitle", "CR Title")}
+          {renderInput("crNumber", "CR Number")}
+          {renderInput("crTitle", "CR Title")}
         </motion.div>
 
         {/* File Paths for Backend - Only show when Backend is selected */}
@@ -477,7 +477,7 @@ const FormComponent = () => {
         )}
 
         {/* Dates */}
-        <motion.div 
+        <motion.div
           className="date-grid"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -494,18 +494,18 @@ const FormComponent = () => {
           transition={{ duration: 0.5, delay: 0.7 }}
         >
           <h3 className="section-title" style={{ color: currentColors.text }}>Supervisor Info:</h3>
-        {renderInput("supervisorName", "Supervisor Name")}
-        {renderInput("supervisorEmail", "Supervisor Email", "email")}
-        {renderInput("supervisorPhone", "Supervisor Phone")}
+          {renderInput("supervisorName", "Supervisor Name")}
+          {renderInput("supervisorEmail", "Supervisor Email", "email")}
+          {renderInput("supervisorPhone", "Supervisor Phone")}
         </motion.div>
 
         {/* Test File Switch - Only show when Download Zip is checked */}
         {formik.values.downloadZip && (
-          <motion.div 
-            style={{ 
-              margin: '1.5rem 0 1rem 0', 
-              display: 'flex', 
-              alignItems: 'center', 
+          <motion.div
+            style={{
+              margin: '1.5rem 0 1rem 0',
+              display: 'flex',
+              alignItems: 'center',
               gap: '1rem',
               padding: '1rem',
               borderRadius: '0.75rem',
@@ -517,16 +517,16 @@ const FormComponent = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.7 }}
           >
-            <span style={{ 
-              fontWeight: '500', 
+            <span style={{
+              fontWeight: '500',
               color: currentColors.text,
               fontSize: '0.9rem',
               opacity: formik.values.testFileMode === 'demo' ? 1 : 0.6
             }}>
               Demo Test Cases File
             </span>
-            
-            <div 
+
+            <div
               onClick={() => formik.setFieldValue('testFileMode', formik.values.testFileMode === 'demo' ? 'user' : 'demo')}
               style={{
                 position: 'relative',
@@ -555,9 +555,9 @@ const FormComponent = () => {
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               />
             </div>
-            
-            <span style={{ 
-              fontWeight: '500', 
+
+            <span style={{
+              fontWeight: '500',
               color: currentColors.text,
               fontSize: '0.9rem',
               opacity: formik.values.testFileMode === 'user' ? 1 : 0.6
@@ -569,8 +569,8 @@ const FormComponent = () => {
 
         {/* User Test File Input - Only show when Download Zip is checked and user mode is selected */}
         {formik.values.downloadZip && formik.values.testFileMode === 'user' && (
-          <motion.div 
-            style={{ 
+          <motion.div
+            style={{
               marginBottom: '1rem',
               padding: '1rem',
               borderRadius: '0.75rem',
@@ -582,12 +582,12 @@ const FormComponent = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <label 
-              htmlFor="userTestFile" 
-              style={{ 
-                display: 'block', 
-                fontWeight: '500', 
-                color: currentColors.text, 
+            <label
+              htmlFor="userTestFile"
+              style={{
+                display: 'block',
+                fontWeight: '500',
+                color: currentColors.text,
                 marginBottom: '0.5rem',
                 fontSize: '0.9rem'
               }}
@@ -602,7 +602,7 @@ const FormComponent = () => {
               onChange={e => {
                 formik.setFieldValue('userTestFile', e.currentTarget.files[0]);
               }}
-              style={{ 
+              style={{
                 color: currentColors.text,
                 width: '100%',
                 padding: '0.5rem',
@@ -613,9 +613,9 @@ const FormComponent = () => {
               }}
             />
             {formik.touched.userTestFile && formik.errors.userTestFile && (
-              <motion.p 
-                style={{ 
-                  color: currentColors.error, 
+              <motion.p
+                style={{
+                  color: currentColors.error,
                   fontSize: '0.9rem',
                   marginTop: '0.5rem'
                 }}
@@ -630,10 +630,10 @@ const FormComponent = () => {
         )}
 
         {/* Checkboxes Container */}
-        <motion.div 
-          style={{ 
-            display: 'flex', 
-            gap: '2rem', 
+        <motion.div
+          style={{
+            display: 'flex',
+            gap: '2rem',
             marginTop: '1rem',
             flexWrap: 'wrap'
           }}
@@ -642,16 +642,16 @@ const FormComponent = () => {
           transition={{ duration: 0.5, delay: 0.8 }}
         >
           {/* Save Details Checkbox */}
-        <div className="save-checkbox">
-          <input
-            type="checkbox"
-            id="saveDetails"
-            name="saveDetails"
-            checked={formik.values.saveDetails}
-            onChange={formik.handleChange}
-          />
+          <div className="save-checkbox">
+            <input
+              type="checkbox"
+              id="saveDetails"
+              name="saveDetails"
+              checked={formik.values.saveDetails}
+              onChange={formik.handleChange}
+            />
             <label htmlFor="saveDetails" style={{ color: currentColors.text }}>Save details for next time</label>
-        </div>
+          </div>
 
           {/* Download Zip Checkbox */}
           <div className="save-checkbox">
@@ -668,10 +668,10 @@ const FormComponent = () => {
 
         {/* Preview Buttons - Only show when form is valid */}
         {isFormValid() && (
-          <motion.div 
-            style={{ 
-              display: 'flex', 
-              gap: '1rem', 
+          <motion.div
+            style={{
+              display: 'flex',
+              gap: '1rem',
               marginTop: '1rem',
               flexDirection: 'column'
             }}
@@ -679,7 +679,7 @@ const FormComponent = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.9 }}
           >
-            <motion.button 
+            <motion.button
               type="button"
               onClick={() => handlePreview('releaseNote')}
               style={{
@@ -698,9 +698,10 @@ const FormComponent = () => {
             >
               Preview RN
             </motion.button>
-            
-            {formik.values.downloadZip && formik.values.testFileMode === 'demo' && (
-              <motion.button 
+
+            {/* Show Preview Test Cases button for backend always, or for frontend when downloadZip is true and testFileMode is demo */}
+            {(formik.values.rnType === 'backend' || (formik.values.downloadZip && formik.values.testFileMode === 'demo')) && (
+              <motion.button
                 type="button"
                 onClick={() => handlePreview('testCases')}
                 style={{
@@ -723,8 +724,8 @@ const FormComponent = () => {
           </motion.div>
         )}
 
-        <motion.button 
-          type="submit" 
+        <motion.button
+          type="submit"
           className="submit-btn"
           style={{
             background: currentColors.gradient,
@@ -765,7 +766,7 @@ const FormComponent = () => {
         </motion.button>
       </motion.form>
 
-      <motion.div 
+      <motion.div
         className="preview-section"
         style={{
           backgroundColor: currentColors.surface,
@@ -778,7 +779,7 @@ const FormComponent = () => {
       >
         {/* Title and Copy Mail Body button row */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem' }}>
-          <motion.h2 
+          <motion.h2
             className="preview-title"
             style={{ color: currentColors.primary, margin: 0 }}
             initial={{ y: -20, opacity: 0 }}
@@ -814,7 +815,7 @@ const FormComponent = () => {
         </div>
 
         <AnimatePresence>
-          <motion.div 
+          <motion.div
             className="preview-group"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -832,7 +833,7 @@ const FormComponent = () => {
             </p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="preview-group"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -849,7 +850,7 @@ const FormComponent = () => {
 
           {/* File Paths Preview for Backend (moved here) */}
           {formik.values.rnType === 'backend' && (
-            <motion.div 
+            <motion.div
               className="preview-group"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -870,7 +871,7 @@ const FormComponent = () => {
 
           {/* Test Case File Name Preview (after file paths) */}
           {formik.values.downloadZip && (
-            <motion.div 
+            <motion.div
               className="preview-group"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -885,7 +886,7 @@ const FormComponent = () => {
             </motion.div>
           )}
 
-          <motion.div 
+          <motion.div
             className="preview-group"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -894,15 +895,15 @@ const FormComponent = () => {
             <h3 className="preview-subtitle" style={{ color: currentColors.text }}>Dates</h3>
             <p style={{ color: currentColors.textSecondary }}>
               <strong style={{ color: currentColors.text }}>Release Date:</strong>{" "}
-            {formatDate(formik.values.releaseDate) || "-"}
-          </p>
+              {formatDate(formik.values.releaseDate) || "-"}
+            </p>
             <p style={{ color: currentColors.textSecondary }}>
               <strong style={{ color: currentColors.text }}>SIT Pass Date:</strong>{" "}
-            {formatDate(formik.values.sitPassDate) || "-"}
-          </p>
+              {formatDate(formik.values.sitPassDate) || "-"}
+            </p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="preview-group"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -924,7 +925,7 @@ const FormComponent = () => {
       </motion.div>
 
       {/* Mail Modal */}
-      <MailModal 
+      <MailModal
         isOpen={isMailModalOpen}
         onClose={() => setIsMailModalOpen(false)}
         crNumber={formik.values.crNumber}
@@ -977,10 +978,10 @@ const App = () => {
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >
-                 {isMobile ? 'Generate RN' : 'Generate Release Note'}
+                {isMobile ? 'Generate RN' : 'Generate Release Note'}
               </motion.h1>
             </Link>
-            
+
             <motion.div style={{ display: 'flex', gap: isMobile ? '0.3rem' : '1rem' }}>
               <Link to="/" style={{ textDecoration: 'none' }}>
                 <motion.button
@@ -1000,7 +1001,7 @@ const App = () => {
                   Home
                 </motion.button>
               </Link>
-              
+
               <Link to="/docs" style={{ textDecoration: 'none' }}>
                 <motion.button
                   style={{

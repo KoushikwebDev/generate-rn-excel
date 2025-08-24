@@ -311,7 +311,10 @@ export const generatePreviewReleaseNote = async (params) => {
       crNumber,
       "1",
       "react build",
-      "react build",
+      // If backend, show numbered file paths, else default to "react build"
+      params.rnType === 'backend' && Array.isArray(params.filePaths) && params.filePaths.length > 0
+        ? params.filePaths.map((p, i) => `${i + 1}. ${p}`).join('\n')
+        : "react build",
       "react build",
       "rollback.txt",
       ""
@@ -903,7 +906,9 @@ const generateReleaseNoteHTML = (params) => {
           <td>${params.crNumber || ""}</td>
           <td>1</td>
           <td>react build</td>
-          <td>react build</td>
+          <td>${params.rnType === 'backend' && Array.isArray(params.filePaths) && params.filePaths.length > 0
+            ? params.filePaths.map((p, i) => `${i + 1}. ${p}`).join('<br>')
+            : "react build"}</td>
           <td>react build</td>
           <td>rollback.txt</td>
           <td></td>
