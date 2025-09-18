@@ -383,7 +383,7 @@ const generateReleaseNoteBuffer = async (params) => {
       "Interim",
       params.developerName || "Koushik Saha",
       params.developerPhone || "8637538774",
-      `${params.supervisorName || "Amlan"} ${params.supervisorPhone || params.supervisorEmail || "9830940648"}`,
+      `${params.supervisorName || "Raju Singh"} ${params.supervisorPhone || params.supervisorEmail || "9830306821"}`,
       "NO",
       "No"
     ],

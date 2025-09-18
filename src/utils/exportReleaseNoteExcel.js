@@ -303,7 +303,7 @@ export const exportReleaseNoteExcel = async (params) => {
       "Interim",
       developerName || "Koushik Saha",
       developerPhone || "8637538774",
-      `${supervisorName || "Amlan"} ${supervisorPhone || supervisorEmail || "9830940648"}`,
+      `${supervisorName || "Raju Singh"} ${supervisorPhone || supervisorEmail || "9830306821"}`,
       "NO",
       "No"
     ],

@@ -289,7 +289,7 @@ export const generatePreviewReleaseNote = async (params) => {
       "Interim",
       developerName || "Koushik Saha",
       developerPhone || "8637538774",
-      `${supervisorName || "Amlan"} ${supervisorPhone || supervisorEmail || "9830940648"}`,
+      `${supervisorName || "Raju Singh"} ${supervisorPhone || supervisorEmail || "9830306821"}`,
       "NO",
       "No"
     ],
@@ -881,7 +881,7 @@ const generateReleaseNoteHTML = (params) => {
           <td>Interim</td>
           <td>${params.developerName || "Koushik Saha"}</td>
           <td>${params.developerPhone || "8637538774"}</td>
-          <td>${params.supervisorName || "Amlan"} ${params.supervisorPhone || params.supervisorEmail || "9830940648"}</td>
+          <td>${params.supervisorName || "Raju Singh"} ${params.supervisorPhone || params.supervisorEmail || "9830306821"}</td>
           <td>NO</td>
           <td>No</td>
         </tr>
@@ -1110,7 +1110,7 @@ const generateEditableReleaseNoteHTML = (params) => {
           <td><input type="text" value="Interim" readonly /></td>
           <td><input type="text" value="${params.developerName || "Koushik Saha"}" data-field="developerName" /></td>
           <td><input type="text" value="${params.developerPhone || "8637538774"}" data-field="developerPhone" /></td>
-          <td><input type="text" value="${params.supervisorName || "Amlan"} ${params.supervisorPhone || params.supervisorEmail || "9830940648"}" data-field="supervisorContact" /></td>
+          <td><input type="text" value="${params.supervisorName || "Raju Singh"} ${params.supervisorPhone || params.supervisorEmail || "9830306821"}" data-field="supervisorContact" /></td>
           <td><input type="text" value="NO" readonly /></td>
           <td><input type="text" value="No" readonly /></td>
         </tr>

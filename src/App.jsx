@@ -22,9 +22,9 @@ const initialValues = {
   developerPhone: "",
   crNumber: "",
   crTitle: "",
-  supervisorName: "Amlan",
-  supervisorEmail: "amlan.chakraborty@intglobal.com",
-  supervisorPhone: "9830940648",
+  supervisorName: "Raju Singh",
+  supervisorEmail: "raju@intglobal.com",
+  supervisorPhone: "9830306821",
   saveDetails: true,
   downloadZip: true, // changed from false to true
   testFileMode: 'demo', // 'demo' or 'user'
