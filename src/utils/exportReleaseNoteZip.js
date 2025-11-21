@@ -1,6 +1,7 @@
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import sbiLogo from "../images/sbig-logo.png"; // Direct PNG import
+import { supervisorInfo } from "../supervisorInfo";
 
 // Import static files - we'll fetch them dynamically
 const STATIC_FILES = {
@@ -383,7 +384,7 @@ const generateReleaseNoteBuffer = async (params) => {
       "Interim",
       params.developerName || "Koushik Saha",
       params.developerPhone || "8637538774",
-      `${params.supervisorName || "Raju Singh"} ${params.supervisorPhone || params.supervisorEmail || "9830306821"}`,
+      `${params.supervisorName || supervisorInfo.name} ${params.supervisorPhone || params.supervisorEmail || supervisorInfo.phone}`,
       "NO",
       "No"
     ],

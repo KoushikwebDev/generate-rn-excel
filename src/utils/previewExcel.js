@@ -1,5 +1,6 @@
 import ExcelJS from "exceljs";
 import sbiLogo from "../images/sbig-logo.png";
+import { supervisorInfo } from "../supervisorInfo";
 
 export const generatePreviewReleaseNote = async (params) => {
   const {
@@ -289,7 +290,7 @@ export const generatePreviewReleaseNote = async (params) => {
       "Interim",
       developerName || "Koushik Saha",
       developerPhone || "8637538774",
-      `${supervisorName || "Raju Singh"} ${supervisorPhone || supervisorEmail || "9830306821"}`,
+      `${supervisorName || supervisorInfo.name} ${supervisorPhone || supervisorEmail || supervisorInfo.phone}`,
       "NO",
       "No"
     ],
@@ -881,7 +882,7 @@ const generateReleaseNoteHTML = (params) => {
           <td>Interim</td>
           <td>${params.developerName || "Koushik Saha"}</td>
           <td>${params.developerPhone || "8637538774"}</td>
-          <td>${params.supervisorName || "Raju Singh"} ${params.supervisorPhone || params.supervisorEmail || "9830306821"}</td>
+          <td>${params.supervisorName || supervisorInfo.name} ${params.supervisorPhone || params.supervisorEmail || supervisorInfo.phone}</td>
           <td>NO</td>
           <td>No</td>
         </tr>
@@ -1110,7 +1111,7 @@ const generateEditableReleaseNoteHTML = (params) => {
           <td><input type="text" value="Interim" readonly /></td>
           <td><input type="text" value="${params.developerName || "Koushik Saha"}" data-field="developerName" /></td>
           <td><input type="text" value="${params.developerPhone || "8637538774"}" data-field="developerPhone" /></td>
-          <td><input type="text" value="${params.supervisorName || "Raju Singh"} ${params.supervisorPhone || params.supervisorEmail || "9830306821"}" data-field="supervisorContact" /></td>
+          <td><input type="text" value="${params.supervisorName || supervisorInfo.name} ${params.supervisorPhone || params.supervisorEmail || supervisorInfo.phone}" data-field="supervisorContact" /></td>
           <td><input type="text" value="NO" readonly /></td>
           <td><input type="text" value="No" readonly /></td>
         </tr>

@@ -1,6 +1,7 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import sbiLogo from "../images/sbig-logo.png"; // Direct PNG import
+import { supervisorInfo } from "../supervisorInfo";
 
 export const exportReleaseNoteExcel = async (params) => {
   const {
@@ -303,7 +304,7 @@ export const exportReleaseNoteExcel = async (params) => {
       "Interim",
       developerName || "Koushik Saha",
       developerPhone || "8637538774",
-      `${supervisorName || "Raju Singh"} ${supervisorPhone || supervisorEmail || "9830306821"}`,
+      `${supervisorName || supervisorInfo.name} ${supervisorPhone || supervisorEmail || supervisorInfo.phone}`,
       "NO",
       "No"
     ],

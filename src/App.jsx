@@ -13,6 +13,7 @@ import { useTheme } from "./context/ThemeContext";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Documentation from "./components/Documentation";
 import MailModal from "./components/MailModal";
+import { supervisorInfo } from "./supervisorInfo";
 
 const initialValues = {
   releaseDate: new Date(),
@@ -22,9 +23,9 @@ const initialValues = {
   developerPhone: "",
   crNumber: "",
   crTitle: "",
-  supervisorName: "Raju Singh",
-  supervisorEmail: "raju@intglobal.com",
-  supervisorPhone: "9830306821",
+  supervisorName: supervisorInfo.name,
+  supervisorEmail: supervisorInfo.email,
+  supervisorPhone: supervisorInfo.phone,
   saveDetails: true,
   downloadZip: true, // changed from false to true
   testFileMode: 'demo', // 'demo' or 'user'
