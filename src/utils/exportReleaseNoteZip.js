@@ -405,12 +405,12 @@ const generateReleaseNoteBuffer = async (params) => {
     [
       params.crNumber,
       "1",
-      "react build",
+      "build.zip",
       // If backend, show numbered file paths, else default to "react build"
       params.rnType === 'backend' && Array.isArray(params.filePaths) && params.filePaths.length > 0
         ? params.filePaths.map((p, i) => `${i + 1}. ${p}`).join('\n')
-        : "react build",
-      "react build",
+        : "build.zip",
+      "build.zip",
       "rollback.txt",
       ""
     ],
