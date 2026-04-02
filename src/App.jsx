@@ -23,6 +23,7 @@ const initialValues = {
   developerPhone: "",
   crNumber: "",
   crTitle: "",
+  testingScope: "",
   supervisorName: supervisorInfo.name,
   supervisorEmail: supervisorInfo.email,
   supervisorPhone: supervisorInfo.phone,
@@ -46,6 +47,7 @@ const validationSchema = Yup.object({
     .required("Developer phone is required"),
   crNumber: Yup.string().required("CR Number is required"),
   crTitle: Yup.string().required("CR Title is required"),
+  testingScope: Yup.string().required("Testing Scope is required"),
   supervisorName: Yup.string().required("Supervisor name is required"),
   supervisorEmail: Yup.string()
     .email("Invalid email")
@@ -194,7 +196,8 @@ const FormComponent = () => {
       formik.values.developerEmail &&
       formik.values.developerPhone &&
       formik.values.crNumber &&
-      formik.values.crTitle;
+      formik.values.crTitle &&
+      formik.values.testingScope;
   };
 
   // Handle preview button clicks
@@ -236,8 +239,6 @@ const FormComponent = () => {
   }, [formik]);
 
   const renderInput = (name, label, type = "text") => {
-    const isSupervisorField = name.startsWith("supervisor");
-
     return (
       <motion.div
         className="form-group mb-4"
@@ -256,17 +257,10 @@ const FormComponent = () => {
           type={type}
           name={name}
           placeholder={label}
-          onChange={(e) => {
-            if (!isSupervisorField) {
-              formik.handleChange(e);
-            } else {
-              e.preventDefault();
-            }
-          }}
+          onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values[name]}
           className="input-field"
-          disabled={isSupervisorField}
           style={{
             backgroundColor: currentColors.inputBg,
             border: `1px solid ${currentColors.inputBorder}`,
@@ -417,6 +411,7 @@ const FormComponent = () => {
           <h3 className="section-title" style={{ color: currentColors.text }}>CR Details:</h3>
           {renderInput("crNumber", "CR Number")}
           {renderInput("crTitle", "CR Title")}
+          {renderInput("testingScope", "Testing Scope & Functionality Impacted")}
         </motion.div>
 
         {/* File Paths for Backend - Only show when Backend is selected */}
@@ -847,6 +842,9 @@ const FormComponent = () => {
             </p>
             <p style={{ color: currentColors.textSecondary }}>
               <strong style={{ color: currentColors.text }}>CR Title:</strong> {formik.values.crTitle || "-"}
+            </p>
+            <p style={{ color: currentColors.textSecondary }}>
+              <strong style={{ color: currentColors.text }}>Testing Scope:</strong> {formik.values.testingScope || "-"}
             </p>
           </motion.div>
 

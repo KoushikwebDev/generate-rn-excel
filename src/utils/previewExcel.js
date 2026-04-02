@@ -11,6 +11,7 @@ export const generatePreviewReleaseNote = async (params) => {
     developerPhone,
     crNumber,
     crTitle,
+    testingScope,
     supervisorName,
     supervisorEmail,
     supervisorPhone,
@@ -221,7 +222,7 @@ export const generatePreviewReleaseNote = async (params) => {
       "Passed",
       sitPassDate || releaseDate || "6/6/2025",
       "",
-      ""
+      "Customization"
     ],
     35
   );
@@ -242,9 +243,9 @@ export const generatePreviewReleaseNote = async (params) => {
       crTitle,
       crTitle,
       applicationName,
+      "NA",
       "",
-      "",
-      ""
+      "NA"
     ],
     40
   );
@@ -263,10 +264,10 @@ export const generatePreviewReleaseNote = async (params) => {
     [
       crNumber,
       crTitle,
-      "",
+      "PASS",
       "NA",
       "NA",
-      "",
+      testingScope || "",
       "NA"
     ],
     35
@@ -804,7 +805,7 @@ const generateReleaseNoteHTML = (params) => {
           <td>Passed</td>
           <td>${formatDate(params.sitPassDate) || formatDate(params.releaseDate) || "6/6/2025"}</td>
           <td></td>
-          <td></td>
+          <td>Customization</td>
         </tr>
       </tbody>
     </table>
@@ -828,9 +829,9 @@ const generateReleaseNoteHTML = (params) => {
           <td>${params.crTitle || ""}</td>
           <td>${params.crTitle || ""}</td>
           <td>${params.applicationName || "website portal"}</td>
+          <td>NA</td>
           <td></td>
-          <td></td>
-          <td></td>
+          <td>NA</td>
         </tr>
       </tbody>
     </table>
@@ -852,10 +853,10 @@ const generateReleaseNoteHTML = (params) => {
         <tr>
           <td>${params.crNumber || ""}</td>
           <td>${params.crTitle || ""}</td>
-          <td></td>
+          <td>PASS</td>
           <td>NA</td>
           <td>NA</td>
-          <td></td>
+          <td>${params.testingScope || ""}</td>
           <td>NA</td>
         </tr>
       </tbody>
@@ -1033,7 +1034,7 @@ const generateEditableReleaseNoteHTML = (params) => {
           <td><input type="text" value="Passed" readonly /></td>
           <td><input type="text" value="${formatDate(params.sitPassDate) || formatDate(params.releaseDate) || "6/6/2025"}" data-field="sitPassDate" /></td>
           <td><input type="text" value="" data-field="sitReason" /></td>
-          <td><input type="text" value="" data-field="customization" /></td>
+          <td><input type="text" value="Customization" data-field="customization" /></td>
         </tr>
       </tbody>
     </table>
@@ -1057,9 +1058,9 @@ const generateEditableReleaseNoteHTML = (params) => {
           <td><input type="text" value="${params.crTitle || ""}" data-field="crTitle" /></td>
           <td><input type="text" value="${params.crTitle || ""}" data-field="productName" /></td>
           <td><input type="text" value="${params.applicationName || "website portal"}" data-field="applicationName" /></td>
-          <td><input type="text" value="" data-field="impactOther" /></td>
+          <td><input type="text" value="NA" data-field="impactOther" /></td>
           <td><input type="text" value="" data-field="impactedServices" /></td>
-          <td><input type="text" value="" data-field="svnPath" /></td>
+          <td><input type="text" value="NA" data-field="svnPath" /></td>
         </tr>
       </tbody>
     </table>
@@ -1081,10 +1082,10 @@ const generateEditableReleaseNoteHTML = (params) => {
         <tr>
           <td><input type="text" value="${params.crNumber || ""}" data-field="crNumber" /></td>
           <td><input type="text" value="${params.crTitle || ""}" data-field="expectedResult" /></td>
-          <td><input type="text" value="" data-field="actualResult" /></td>
+          <td><input type="text" value="PASS" data-field="actualResult" /></td>
           <td><input type="text" value="NA" readonly /></td>
           <td><input type="text" value="NA" readonly /></td>
-          <td><input type="text" value="" data-field="testingScope" /></td>
+          <td><input type="text" value="${params.testingScope || ""}" data-field="testingScope" /></td>
           <td><input type="text" value="NA" readonly /></td>
         </tr>
       </tbody>

@@ -12,6 +12,7 @@ export const exportReleaseNoteExcel = async (params) => {
     developerPhone,
     crNumber,
     crTitle,
+    testingScope,
     supervisorName,
     supervisorEmail,
     supervisorPhone,
@@ -235,7 +236,7 @@ export const exportReleaseNoteExcel = async (params) => {
       "Passed",
       sitPassDate || releaseDate || "6/6/2025",
       "",
-      ""
+      "Customization"
     ],
     35
   );
@@ -256,9 +257,9 @@ export const exportReleaseNoteExcel = async (params) => {
       crTitle,
       crTitle,
       applicationName,
+      "NA",
       "",
-      "",
-      ""
+      "NA"
     ],
     40
   );
@@ -277,10 +278,10 @@ export const exportReleaseNoteExcel = async (params) => {
     [
       crNumber,
       crTitle,
-      "",
+      "PASS",
       "NA",
       "NA",
-      "",
+      testingScope || "",
       "NA"
     ],
     35

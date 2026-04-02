@@ -18,6 +18,7 @@ export const exportReleaseNoteZip = async (params) => {
     developerPhone,
     crNumber,
     crTitle,
+    testingScope,
     supervisorName,
     supervisorEmail,
     supervisorPhone,
@@ -315,7 +316,7 @@ const generateReleaseNoteBuffer = async (params) => {
       "Passed",
       params.sitPassDate || params.releaseDate || "6/6/2025",
       "",
-      ""
+      "Customization"
     ],
     35
   );
@@ -336,9 +337,9 @@ const generateReleaseNoteBuffer = async (params) => {
       params.crTitle,
       params.crTitle,
       params.applicationName,
+      "NA",
       "",
-      "",
-      ""
+      "NA"
     ],
     40
   );
@@ -357,10 +358,10 @@ const generateReleaseNoteBuffer = async (params) => {
     [
       params.crNumber,
       params.crTitle,
-      "",
+      "PASS",
       "NA",
       "NA",
-      "",
+      params.testingScope || "",
       "NA"
     ],
     35

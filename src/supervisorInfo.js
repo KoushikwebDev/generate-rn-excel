@@ -1,5 +1,5 @@
 export const supervisorInfo = {
-  name: "Suresh Das",
-  email: "suresh.das@intglobal.com",
-  phone: "8888339861",
+  name: "Raju Singh",
+  email: "raju@intglobal.com",
+  phone: "9830306821",
 };
